@@ -4,7 +4,7 @@ $commentsLimit = 5;
 
 //handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
+    $name = trim($_POST['guestname'] ?? '');
     $comment = trim($_POST['comment'] ?? '');
 
     // only process if both name and comment are provided and not empty
@@ -28,6 +28,6 @@ if (file_exists($commentFile)) {
     $allComments = array_reverse(
         file($commentFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)
     );
-    //limit to 10 most recent comments
+    //limit comment amount change comment limit
     $comments = array_slice($allComments, 0, $commentsLimit);
 }

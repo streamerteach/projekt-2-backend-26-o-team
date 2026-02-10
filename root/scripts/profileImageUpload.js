@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
     const uploadForm = document.getElementById('uploadForm');
     const uploadMessage = document.getElementById('uploadMessage');
-    const profileImagePreview = document.getElementById('profileImagePreview');
+
+    const profileImagePreview = document.getElementById('profileImagePreview'); //newest
+    const oldProfileImagePreview = document.getElementById('oldProfileImagePreview'); //second newest
 
     uploadForm.addEventListener('submit', function (e) {
-        //do not reload the page
-        e.preventDefault();
+        e.preventDefault(); //do not reload saar
 
         const formData = new FormData(uploadForm);
 
@@ -13,8 +14,9 @@ document.addEventListener('DOMContentLoaded', function () {
             method: 'POST',
             body: formData
         })
-            .then(response => response.json()) //jasonify :()
+            .then(response => response.json())
             .then(data => {
+
                 uploadMessage.classList.remove('success', 'error');
                 uploadMessage.style.display = 'block';
 
@@ -22,30 +24,25 @@ document.addEventListener('DOMContentLoaded', function () {
                     uploadMessage.classList.add('success');
                     uploadMessage.textContent = data.message;
 
-                    // update the image preview if element exists
-                    if (profileImagePreview) {
-                        profileImagePreview.src = data.filepath;
-                    } else {
-                        // If no image element exists yet, create one
-                        const container = document.querySelector('.profileImagePreviewContainer');
-                        if (container) {
-                            const img = document.createElement('img');
-                            img.id = 'profileImagePreview';
-                            img.src = data.filepath;
-                            img.alt = 'Profile Image';
-                            container.appendChild(img);
-                        }
+                    //newest image uploaded
+                    if (profileImagePreview && data.filepath) {
+                        profileImagePreview.src = data.filepath + '?t=' + Date.now(); //cache bust
                     }
 
-                    // clear the file input
+                    //second latest image
+                    if (oldProfileImagePreview && data.secondLatestImage) {
+                        oldProfileImagePreview.src = data.secondLatestImage + '?t=' + Date.now();
+                        oldProfileImagePreview.style.display = 'block';
+                    }
+
                     uploadForm.reset();
+
                 } else {
                     uploadMessage.classList.add('error');
                     uploadMessage.textContent = data.message;
                 }
             })
-            //i am eror
-            .catch(error => {
+            .catch(error => { //iam eror
                 uploadMessage.classList.remove('success');
                 uploadMessage.classList.add('error');
                 uploadMessage.style.display = 'block';
@@ -53,4 +50,3 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 });
-

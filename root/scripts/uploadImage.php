@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     echo json_encode(["success" => false, "message" => "POST Method required"]);
     exit;
 }
-//check error code
+
 if ($_FILES["profileImage"]["error"] !== UPLOAD_ERR_OK) {
     $error_message = "Unknown upload error";
     switch ($_FILES["profileImage"]["error"]) {
@@ -49,14 +49,13 @@ if ($_FILES["profileImage"]["error"] !== UPLOAD_ERR_OK) {
     echo json_encode(["success" => false, "message" => $error_message]);
     exit;
 }
-//exit if too large
+
 if ($_FILES["profileImage"]["size"] > 5000000) {
     http_response_code(400);
     echo json_encode(["success" => false, "message" => "File too large (Max 5MB)"]);
     exit;
 }
 
-//exit if wrong file type
 $mime_types = ["image/png", "image/jpeg", "image/webp"];
 if (!in_array($_FILES["profileImage"]["type"], $mime_types)) {
     http_response_code(400);
@@ -67,20 +66,19 @@ if (!in_array($_FILES["profileImage"]["type"], $mime_types)) {
 $finfo = new finfo(FILEINFO_MIME_TYPE);
 $mime_type = $finfo->file($_FILES["profileImage"]["tmp_name"]);
 
-//sanitize image name incase illegal characters
+//sanitize
 $pathinfo = pathinfo($_FILES["profileImage"]["name"]);
 $base = $pathinfo["filename"];
 $base = preg_replace("/[^\w-]/", "_", $base);
 $currentUser = $_SESSION["username"];
 
-//validate username check if user account exists and is not empty
 if (empty($currentUser)) {
     http_response_code(401);
     echo json_encode(["success" => false, "message" => "User not logged in"]); //L
     exit;
 }
 
-//username validation numbers and letters only
+//numbers and letters only
 if (!preg_match("/^[a-zA-Z0-9_-]+$/", $currentUser)) {
     http_response_code(400);
     echo json_encode(["success" => false, "message" => "Invalid username format"]);
@@ -118,17 +116,24 @@ if (!move_uploaded_file($_FILES["profileImage"]["tmp_name"], $destination)) {
 $relativePath = "../media/upload/" . $currentUser . "/" . $filename;
 $_SESSION["profileImage"] = $relativePath;
 
-//get the latest profile image for the user
+//latest
 $latestImage = getLatestProfileImage($userFolder);
-$latestImagePath = null;
-if ($latestImage) {
-    $latestImagePath = "../media/upload/" . $currentUser . "/" . $latestImage;
-}
+$latestImagePath = $latestImage
+    ? "../media/upload/" . $currentUser . "/" . $latestImage
+    : null;
+
+//second latest
+$secondImage = getUserSecondImagePath($userFolder);
+$secondImagePath = $secondImage
+    ? "../media/upload/" . $currentUser . "/" . $secondImage
+    : null;
+
 
 echo json_encode([
     "success" => true,
     "message" => "Image uploaded successfully",
     "filepath" => $relativePath,
-    "latestImage" => $latestImagePath
+    "latestImage" => $latestImagePath,
+    "secondLatestImage" => $secondImagePath
 
 ]);

@@ -1,5 +1,4 @@
 <?php include "../scripts/sessionhandler.php"; ?>
-<?php include "../scripts/nav.php"; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,6 +12,7 @@
 </head>
 
 <body>
+    <?php include "../scripts/nav.php"; ?>
     <div id="centeringDiv">
         <div id="loginForm">
             <?php

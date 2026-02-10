@@ -1,5 +1,4 @@
 <?php
-if(!$scriptcall){die('Access Denied.');}
-?>
-
-<
+if (!$scriptcall) {
+	die('Access Denied.');
+}

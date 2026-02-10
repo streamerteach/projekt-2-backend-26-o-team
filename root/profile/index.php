@@ -11,7 +11,6 @@ if (isset($_SESSION["loggedin"])) {
 */
 //for debug and dev only
 include "../scripts/sessionhandler.php";
-include "../scripts/nav.php";
 include "../scripts/timeToDate.php";
 include "../scripts/imageHelper.php";
 ?>
@@ -28,6 +27,7 @@ include "../scripts/imageHelper.php";
 </head>
 
 <body>
+    <?php include "../scripts/nav.php"; ?>
     <div id="pageContentCentering">
         <div id="profileBox">
 
@@ -38,7 +38,7 @@ include "../scripts/imageHelper.php";
 
             <?php
             // get latest image from folder first fallback to session
-            $profileImage = getLatestUserProfileImage($_SESSION["username"] ?? null);
+            $profileImage = getUserImagePath($_SESSION["username"] ?? null);
             if (!$profileImage && isset($_SESSION["profileImage"])) {
                 $profileImage = $_SESSION["profileImage"];
             }
@@ -53,6 +53,7 @@ include "../scripts/imageHelper.php";
             <div>
                 <button type="button" onclick="location.href='../profile/editProfile.php'">Edit Profile</button>
                 <button type="button" onclick="location.href='../scripts/logout.php'">Logout</button>
+                <button onclick="location.href='../scripts/cube.php'">Cube</button>
             </div>
         </div>
         <div id="dateTimeBox">

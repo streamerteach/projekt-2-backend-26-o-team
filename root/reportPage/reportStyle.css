@@ -1,0 +1,52 @@
+#text-section {
+    margin: 10px;
+    max-width: 40vw;
+    font-size: large;
+    line-height: 1.6;
+}
+
+#centered {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1,h2,h3,h4,h5 {
+    font-weight: 900;
+}
+
+.bg {
+    background-color: #0c0b16;
+    padding: 10px 80px;
+    min-height: calc(100vh - 50px); /* remove when nav is changed to be static*/
+    box-sizing: border-box; /* should honestly be global at this point */
+}
+
+@media (max-width: 850px) {
+    .bg { 
+        padding: 10px 20px;
+    }
+}
+
+.c1 {
+    color: #B9BAEBff;
+}
+.c2 {
+    color: #7EB1CAff;
+}
+.c3 {
+    color: #F3A84Eff;
+}
+.c4 {
+    color: #F576B3ff;
+}
+.c5 {
+    color: #B371BDff;
+}
+
+.report-text {
+    color: #DEDDE8ff;
+    font-size: 16pt;
+}

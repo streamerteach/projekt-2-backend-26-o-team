@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+//if use only session destroy cookie persists. dont know why
 // clear the session cookie
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();

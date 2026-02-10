@@ -1,7 +1,6 @@
 <?php
 $logFile = dirname(__DIR__) . DIRECTORY_SEPARATOR . "logs" . DIRECTORY_SEPARATOR . "visitor_log.txt";
 
-//visitor ip
 $ip = $_SERVER['REMOTE_ADDR'];
 $time = date('d-m-Y H:i:s');
 
@@ -25,5 +24,4 @@ if (!isset($visitors[$ip])) {
     );
 }
 
-//total unique visitors
 $totalVisitors = count($visitors);

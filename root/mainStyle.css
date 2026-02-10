@@ -21,6 +21,9 @@
 html {
     height: 100%;
     background-color: var(--collight);
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -28,6 +31,9 @@ body {
     margin: 0;
     padding: 0;
     background-color: var(--colbg);
+    height: 100vh;
+    height: 100dvh;
+    
 }
 
 button {
@@ -50,6 +56,7 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100vw;
 }
 
 header ul {

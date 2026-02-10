@@ -1,6 +1,5 @@
 <?php ob_start();
 include "../scripts/sessionhandler.php";
-include "../scripts/nav.php";
 include "../scripts/landingPageWelcomeCookies.php";
 include "../scripts/visitorCounter.php";
 include "../scripts/guestbook.php";
@@ -17,6 +16,7 @@ include "../scripts/guestbook.php";
 </head>
 
 <body>
+    <?php include "../scripts/nav.php"; ?>
     <div class="hero-main">
         <div class="herotextcontainer">
             <h1>Unnamed Dating Site</h1>
@@ -36,33 +36,33 @@ include "../scripts/guestbook.php";
     <div class="section-dark">
         <div class="CommentSection">
             <form method="post">
-                <div>
-                    <input type="text" placeholder="enter name" name="name" required>
-                    <br>
-                    <textarea name="comment" placeholder="Comment here" rows="4"></textarea>
-                    <br>
+                <div id="commentInputs">
+                    <input type="text" placeholder="enter name" name="guestname" required>
+                    <textarea name="comment" placeholder="Comment here" rows="3"></textarea>
                 </div>
                 <input type="submit" value="Comment">
             </form>
-            <?php
-            if (empty($comments)): ?>
-                <p>No comments yet. Be the first to comment!</p>
-            <?php else: ?>
-                <?php foreach ($comments as $line): ?>
-                    <?php
-                    [$time, $name, $text] = explode('|', $line, 3);
-                    ?>
-                    <div class="comment">
-                        <div class="meta">
-                            <strong><?= htmlspecialchars($name) ?></strong>
-                            - <?= htmlspecialchars($time) ?>
+            <div class="commentsDisplay"> <!-- gross php tag block -->
+                <?php
+                if (empty($comments)): ?>
+                    <p>No comments yet. Be the first to comment!</p>
+                <?php else: ?>
+                    <?php foreach ($comments as $line): ?>
+                        <?php
+                        [$time, $name, $text] = explode('|', $line, 3);
+                        ?>
+                        <div class="comment">
+                            <div class="meta">
+                                <strong><?= htmlspecialchars($name) ?></strong>
+                                - <?= htmlspecialchars($time) ?>
+                            </div>
+                            <div class="text">
+                                <?= htmlspecialchars($text) ?>
+                            </div>
                         </div>
-                        <div class="text">
-                            <?= htmlspecialchars($text) ?>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
         </div>
         <img src="../media/newlogo.png" alt="" class="logo">
         <div class="text-section">

@@ -1,13 +1,13 @@
 <?php include "../scripts/sessionhandler.php"; ?>
 <?php
-
+// why put the only other include outside php tags? (⌐■_■) because i can
 require '../scripts/sanitize.php';
 
 if (isset($_REQUEST['username']) && isset($_REQUEST['email'])) {
     $username = test_input($_REQUEST['username']);
     $email = trim($_REQUEST['email']);
 
-    //validate email format
+    //validate email format 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $_SESSION['register_error'] = "Invalid email address!";
         header("Location: ./index.php");
@@ -20,18 +20,25 @@ if (isset($_REQUEST['username']) && isset($_REQUEST['email'])) {
     //generate random password
     $password = generateRandomPassword(8);
 
-    //send email with password currently tested but no response on cgi.arcada.
     $to = $email;
-    $subject = "Welcome to Unnamed Dating Site - Your Login Credentials";
-    $message = "Hello " . htmlspecialchars($username) . ",\n\n";
-    $message .= "Your account has been successfully created!\n\n";
-    $message .= "Username: " . htmlspecialchars($username) . "\n";
-    $message .= "Password: " . $password . "\n\n";
-    $message .= "Please log in to your account and change your password.\n\n";
-    $message .= "Best regards,\nThe Unnamed Dating Site Team";
 
-    $headers = "From: noreply@Unnameddatingsite.com" . "\r\n";
-    $headers .= "Content-Type: text/plain; charset=UTF-8" . "\r\n";
+    $subject = "Welcome to Unnamed Dating Site - Your Login Credentials";
+
+    $message =
+        "Hello $username\n\n" .
+        "Your account has been successfully created!\n\n" .
+        "Username: $username\n" .
+        "Password: $password\n\n" .
+        "Please log in and change your password.\n";
+
+    $from = "kjellmac@arcada.fi"; //hohohoh
+
+    $headers  = "From: $from\r\n";
+    $headers .= "Reply-To: $from\r\n";
+    $headers .= "X-Mailer: PHP/" . phpversion();
+
+    $sent = mail($to, $subject, $message, $headers, "-f$from");
+
 
     if (mail($to, $subject, $message, $headers)) {
         // if email sent successfully

@@ -6,20 +6,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Report</title>
     <link rel="stylesheet" href="../mainStyle.css">
-    <link rel="stylesheet" href="./homePageStyle.css">
+    <link rel="stylesheet" href="./reportStyle.css">
 </head>
+
 
 <body>
     <?php include "../scripts/nav.php"; ?>
-    <div id="centeringDiv">
-        <h2>Welcome to the Home Page</h2>
-
-        <div id="datingProfilesContainer">
-        </div>
+    <div>
+        here be report
+        <button onclick="location.href='./erikReport.php'">Erik Report</button>
+        <button onclick="location.href='./liseReport.php'">Lise Report</button>
     </div>
 </body>
-<script type="module" src="../mainScript.js"></script>
 
 </html>

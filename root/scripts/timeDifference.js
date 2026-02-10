@@ -7,17 +7,12 @@ const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 
-
-function formatDateFinnish(date) {
-    const dayOfWeek = days[date.getDay()];
-    const dayOfMonth = date.getDate();
-    const month = months[date.getMonth()];
-    return `${dayOfWeek} ${dayOfMonth}. ${month}`;
+function formatDate(date) {
+    return `${days[date.getDay()]} ${date.getDate()}. ${months[date.getMonth()]}`;
 }
 
 function updateCountdown(targetTimestamp) {
-    const now = Date.now();
-    const remaining = targetTimestamp - now;
+    const remaining = targetTimestamp - Date.now();
 
     if (remaining <= 0) {
         output.classList.add('time-output');
@@ -32,7 +27,7 @@ function updateCountdown(targetTimestamp) {
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
     const targetDate = new Date(targetTimestamp);
-    const formattedDate = formatDateFinnish(targetDate);
+    const formattedDate = formatDate(targetDate);
 
     output.classList.add('time-output');
     output.innerHTML = `
@@ -45,7 +40,7 @@ function updateCountdown(targetTimestamp) {
     `;
 }
 
-function handleCalculate(event) {
+function updateTimer(event) {
     //saar do not reload the site. do not reload
     event.preventDefault();
 
@@ -55,21 +50,15 @@ function handleCalculate(event) {
         return;
     }
 
-    const inputDate = new Date(input.value);
-    const now = new Date();
-
     // chigitty chigitty check for past date
-    if (inputDate < now) {
+    if (new Date(input.value) < new Date()) {
         output.classList.add('time-output-error');
         output.innerHTML = '<div>the selected date is in the past!</div>';
         return;
     }
 
-    // get browser timezone offset in minutes
-    const timezoneOffset = new Date().getTimezoneOffset();
-
-    //im URI nating all over the place
-    fetch("../scripts/timeToDate.php?dateTimeInput=" + encodeURIComponent(input.value) + "&tzOffset=" + timezoneOffset, {method: "GET"})
+    //im URI nating all over the place. nightmare style fetch request
+    fetch("../scripts/timeToDate.php?dateTimeInput=" + encodeURIComponent(input.value) + "&tzOffset=" + new Date().getTimezoneOffset(), { method: "GET" })
 
         //http to jason
         .then(response => response.json())
@@ -99,6 +88,6 @@ function handleCalculate(event) {
 // get form and attach submit listener
 const form = document.querySelector('form');
 if (form) {
-    form.addEventListener('submit', handleCalculate);
+    form.addEventListener('submit', updateTimer);
 }
 

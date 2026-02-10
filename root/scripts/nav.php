@@ -11,6 +11,7 @@
                 echo ('<li><a href="../login/index.php">Login</a></li>');
             }
             ?>
+            <li><a href="../reportPage/index.php">Report</a></li>
         </ul>
     </nav>
 </header>

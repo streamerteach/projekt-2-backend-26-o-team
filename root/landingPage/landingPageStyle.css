@@ -50,9 +50,10 @@
 #return-message {
     font-size: 18px;
     color: var(--white);
-    margin-left: 20px;
-    margin-bottom: 20px;
     text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    scale: 0.9;
 }
 
 .comment {
@@ -64,22 +65,33 @@
     color: var(--white);
 }
 
+.CommentSection {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    scale: 0.9;
+}
+
+#commentInputs {
+    display: flex;
+    flex-direction: column;
+}
+
 input[type="text"] {
-    padding: 8px;
-    margin-top: 10px;
+    padding: 5px;
     border: var(--white) 2px solid;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    width: 180px;
 }
 
 input[type="textarea"] {
-    padding: 8px;
+    padding: 5px;
     border: var(--white) 2px solid;
 }
 
 input[type="submit"] {
-    padding: 10px 20px;
+    margin-top: 5px;
+    padding: 5px;
     background-color: var(--contrast3);
     color: var(--white);
     border: 2px solid var(--white);
@@ -102,7 +114,7 @@ input[type="submit"]:hover {
     background-position: center, center;
     background-size: cover, cover;
     height: max(31vh, 250px);
-    width: 100%;
+    width: 100vw;
 }
 
 .hero-main h1 {
@@ -127,6 +139,8 @@ input[type="submit"]:hover {
 .flex-container {
     display: flex;
     flex-direction: row;
+    width: 100vw;
+    height: max(35vh , auto);
 }
 
 .flex-info {
@@ -171,21 +185,24 @@ input[type="submit"]:hover {
 
 #landing-image {
     background-image: url(../media/clouds-purple.jpg);
+    gap: 10px;
 }
 
 .text-section {
     min-width: 250px;
 }
 
-.section-dark {
-    width: 100%;
-    height: max(400px, auto);
+.section-dark, .section-light {
+    width: 100vw;
+    height: auto;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     text-align: center;
+    padding: 25px 15px;
+    box-sizing: border-box;
 }
 
 .section-light {
@@ -197,8 +214,9 @@ input[type="submit"]:hover {
 }
 
 .logo {
-    height: 250px;
-    padding: 30px 30px;
+    height: 330px;
+    padding: 30px 10px;
+    box-sizing: border-box;
 }
 
 .button-large {
@@ -234,6 +252,10 @@ input[type="submit"]:hover {
     }
 
     .flex-image {
-        height: max(200px, auto);
+        height: auto;
+        flex-direction: column;
+        padding: 0 40px;
+        display: inline-block;
+        box-sizing: border-box;
     }
 }

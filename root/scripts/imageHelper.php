@@ -3,14 +3,12 @@
 //return most recent image file from user folder
 function getLatestProfileImage($userFolder)
 {
-    //if no user dir stop
     if (!is_dir($userFolder)) {
         return null;
     }
     //array diff to remove dots
     $files = array_diff(scandir($userFolder, SCANDIR_SORT_DESCENDING), array('.', '..'));
 
-    //no image ;<
     if (empty($files)) {
         return null;
     }
@@ -25,25 +23,73 @@ function getLatestProfileImage($userFolder)
 
     return null;
 }
-
-//get latest user profile image path
-function getLatestUserProfileImage($username)
+//lazy copy of above for second latest
+function getSecondLatestProfileImage($userFolder)
 {
-    if (empty($username)) {
-        return null;
-    }
-
-    $userFolder = dirname(__DIR__) . DIRECTORY_SEPARATOR . "media" . DIRECTORY_SEPARATOR . "upload" . DIRECTORY_SEPARATOR . $username;
-
     if (!is_dir($userFolder)) {
         return null;
     }
+    //same as above
+    $files = array_diff(scandir($userFolder, SCANDIR_SORT_DESCENDING), array('.', '..'));
 
-    $latestImage = getLatestProfileImage($userFolder);
+    if (empty($files)) {
+        return null;
+    }
 
-    if ($latestImage) {
-        return "../media/upload/" . $username . "/" . $latestImage;
+    //return the second most recent
+    $count = 0;
+    foreach ($files as $file) {
+        $filePath = $userFolder . DIRECTORY_SEPARATOR . $file;
+        if (is_file($filePath)) {
+            $count++;
+            if ($count === 2) {
+                return $file;
+            }
+        }
     }
 
     return null;
+}
+
+//get latest user profile image path
+function getUserImagePath($username)
+{
+    if (!$username) return null;
+
+    $folder = dirname(__DIR__) . "/media/upload/" . $username;
+
+    if (!is_dir($folder)) return null;
+
+    $files = array_filter(scandir($folder), function ($f) use ($folder) {
+        return $f !== '.' && $f !== '..' && is_file($folder . '/' . $f);
+    });
+
+    if (empty($files)) return null;
+
+    usort($files, function ($a, $b) use ($folder) {
+        return filemtime($folder . '/' . $b) - filemtime($folder . '/' . $a);
+    });
+
+    return "../media/upload/$username/" . $files[0];
+}
+
+function getUserSecondImagePath($username)
+{
+    if (!$username) return null;
+
+    $folder = dirname(__DIR__) . "/media/upload/" . $username;
+
+    if (!is_dir($folder)) return null;
+
+    $files = array_filter(scandir($folder), function ($f) use ($folder) {
+        return $f !== '.' && $f !== '..' && is_file($folder . '/' . $f);
+    });
+
+    if (count($files) < 2) return null;
+
+    usort($files, function ($a, $b) use ($folder) {
+        return filemtime($folder . '/' . $b) - filemtime($folder . '/' . $a);
+    });
+
+    return "../media/upload/$username/" . $files[1];
 }
