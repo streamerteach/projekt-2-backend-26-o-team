@@ -1,0 +1,28 @@
+#datingProfilesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+#centeringDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 40px;
+}
+
+.profileCard {
+    background-color: var(--coletc);
+    border-radius: 10px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    width: 200px;
+    padding: 15px;
+    text-align: center;
+    font-family: 'Zalando Sans Expanded', sans-serif;
+    height: 100px;
+    width: 200px;
+
+}

@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght,YOPQ@100..900,300&family=Michroma&display=swap');
+
+:root {
+    --collight: #FF5D42;
+    --colbg: #f1cabb;
+    --colaccent: #7823A4;
+    --coldarker: #403772;
+    --coletc: #ffffff;
+    --colnav: #16132f;
+
+
+    --accentsky: #B9BAEBff;
+    --sky: #7EB1CAff;
+    --white: #DEDDE8ff;
+    --contrast: #F3A84Eff;
+    --contrast2: #F576B3ff;
+    --contrast3: #B371BDff;
+
+}
+
+html {
+    height: 100%;
+    background-color: var(--collight);
+}
+
+body {
+    font-family: 'Zalando Sans Expanded', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--colbg);
+}
+
+button {
+    background-color: var(--colnav);
+    color: var(--white);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+
+header {
+    background-color: var(--colnav);
+    color: var(--coletc);
+    text-align: center;
+    padding: 10px 0;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header ul {
+    margin: 0px;
+    padding: 0;
+}
+
+header ul li {
+    list-style: none;
+    display: inline;
+    margin: 0 15px;
+    font-family: "Kumbh Sans", sans-serif;
+    font-size: 1.2rem;
+}
+
+header ul li a {
+    color: var(--coletc);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+header ul li a:hover {
+    text-decoration: underline;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-family: "Michroma", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: white;
+}
+
+.nav-logo {
+    position: absolute;
+    left: 8.5px;
+    top: 7.5px;
+    margin: 0;
+}
+
+.nav-logo img {
+    height: 35px;
+}

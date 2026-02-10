@@ -1,0 +1,184 @@
+#pageContentCentering {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+#profileBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+}
+
+#profileEditContainer {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background: var(--sky);
+    border-radius: 10px;
+}
+
+.profileImageSection {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profileImagePreviewContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#profileImagePreview {
+    max-width: 300px;
+    max-height: 300px;
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+.imageUploadForm {
+    margin: 20px 0;
+}
+
+.imageUploadForm input[type="file"] {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.imageUploadForm button {
+    padding: 10px 20px;
+    background-color: #16132f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.imageUploadForm button:hover {
+    background-color: #312b61;
+}
+
+.uploadMessage {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+}
+
+.uploadMessage.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.uploadMessage.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.backButton {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #16132f;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.backButton:hover {
+    background-color: #312b61;
+}
+
+.profileImageDisplay {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profileImageDisplay img {
+    max-width: 300px;
+    max-height: 300px;
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+#user {
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+#centeringDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 40px;
+}
+
+#dateTimeBox {
+    margin-top: 100px;
+    text-align: center;
+}
+
+input[type="submit"] {
+    padding: 10px 20px;
+    background-color: var(--colnav);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+input[type="dateTime-local"] {
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="dateTime-local"]:focus {
+    outline: none;
+    border-color: var(--colnav);
+    box-shadow: 0 0 5px var(--colnav);
+}
+
+.time-output-error {
+    padding: 10px;
+    border: 2px solid var(--colnav);
+    color: var(--white);
+    border-radius: 5px;
+    font-weight: bold;
+    background-color: var(--colnav);
+
+}
+
+.time-output {
+    background: linear-gradient(135deg, var(--sky) 0%, var(--colnav) 100%);
+    padding: 20px;
+    border-radius: 8px;
+    color: var(--white);
+    text-align: center;
+
+}
+
+.time-output-day {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.time-output-countdown {
+    font-size: 28px;
+    font-weight: bold;
+}
