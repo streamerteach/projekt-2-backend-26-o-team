@@ -21,7 +21,7 @@
                 unset($_SESSION['login_error']);
             }
             ?>
-            <form action="./login.php" method="post">
+            <form action="../scripts/loginHandler.php" method="post">
                 <p class="small">username</p>
                 <input type="text" name="username"><br>
                 <p class="small">password</p>
@@ -29,6 +29,11 @@
                 <a href="http://www.crouton.net">Forgot Password?</a><br><br>
                 <input type="submit" value="Login">
             </form>
+            <?php
+            if (isset($_SESSION['error'])) {
+                echo "<p style='color:red'>" . $_SESSION['error'] . "</p>";
+                unset($_SESSION['error']);
+            } ?>
         </div>
     </div>
 </body>

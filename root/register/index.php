@@ -31,6 +31,7 @@
                 <input type="text" name="username" required><br>
                 <p class="small">e-mail</p>
                 <input type="email" name="email" required><br>
+                <p class="small">password</p>
                 <input type="submit" value="Register">
             </form>
         </div>

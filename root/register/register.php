@@ -3,8 +3,9 @@
 // why put the only other include outside php tags? (⌐■_■) because i can
 require '../scripts/sanitize.php';
 
-if (isset($_REQUEST['username']) && isset($_REQUEST['email'])) {
+if (isset($_REQUEST['username']) && isset($_REQUEST['email']) && isset($_REQUEST['password'])) {
     $username = test_input($_REQUEST['username']);
+    $password = test_input($_REQUEST['password']);
     $email = trim($_REQUEST['email']);
 
     //validate email format 
@@ -14,10 +15,36 @@ if (isset($_REQUEST['username']) && isset($_REQUEST['email'])) {
         exit;
     }
 
+    
+} else {
+    //empty fields
+    $_SESSION['register_error'] = "Username, Password and email are required!";
+    header("Location: ./index.php");
+    exit;
+}
 
-    //me when no database :(
 
-    //generate random password
+
+
+?>
+
+
+
+//old code for sending mail with random password
+//generate random password
+    /*
+function generateRandomPassword($length = 8)
+{
+    $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    $password = '';
+    for ($i = 0; $i < $length; $i++) {
+        $password .= $characters[rand(0, strlen($characters) - 1)];
+    }
+    return $password;
+}
+
+
+
     $password = generateRandomPassword(8);
 
     $to = $email;
@@ -51,22 +78,4 @@ if (isset($_REQUEST['username']) && isset($_REQUEST['email'])) {
         header("Location: ./index.php");
         exit;
     }
-} else {
-    //empty fields
-    $_SESSION['register_error'] = "Username and email are required!";
-    header("Location: ./index.php");
-    exit;
-}
-
-function generateRandomPassword($length = 8)
-{
-    $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    $password = '';
-    for ($i = 0; $i < $length; $i++) {
-        $password .= $characters[rand(0, strlen($characters) - 1)];
-    }
-    return $password;
-}
-
-?>
-
+    */

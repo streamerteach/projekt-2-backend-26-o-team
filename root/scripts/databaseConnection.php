@@ -7,7 +7,10 @@ $username = "kjellmac";
 $password = "mNPHFTrM6g";
 $dbname = "kjellmac";
 
+try {
 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-print("Connected");
+} catch (PDOException $e) {
+    die("Could Not Connect. ". $e->getMessage());
+}
 ?>
