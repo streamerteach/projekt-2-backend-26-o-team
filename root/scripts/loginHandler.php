@@ -6,11 +6,9 @@ include "./sessionhandler.php";
 $password = $_POST['password'];
 $username = $_POST['username'];
 //prepare sql
-$sql = "SELECT username, passhash FROM profiles WHERE username = :username";
+$sql = "SELECT username, passhash FROM profiles WHERE username = ?";
 $stmt = $conn->prepare($sql);
-$stmt->execute([
-    ':username' => $username
-]);
+$stmt->execute([$username]);
 $user = $stmt->fetch();
 
 if (!$user) {
