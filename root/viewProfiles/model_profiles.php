@@ -1,4 +1,5 @@
 <?php 
+include "../scripts/databaseConnection.php";
 $sql = "SELECT * FROM profiles";
 
 $result = $conn->query($sql);

@@ -1,6 +1,8 @@
 <?php include "../scripts/sessionhandler.php"; ?>
 <?php
 
+
+//not used. only for project 1
 require '../scripts/sanitize.php';
 if (isset($_REQUEST['username']) or isset($_REQUEST['password'])) {
 
