@@ -1,21 +1,23 @@
 <?php
-include "./databaseConnection.php";
-include "./sessionhandler.php";
+include "../scripts/databaseConnection.php";
 
 ini_set('display_errors', '1');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
 
-$username = "alfred";
-$realname = "alfred krupp";
-$zipcode = 04250;
-$bio = "bowow";
-$salary = 20000;
-$preference = 1;
-$email = "alfred@gmail.com";
-$role = 1;
-$password = "password";
 
-$passhash = password_hash($password, PASSWORD_DEFAULT);
+function create_user(
+$username,
+$realname,
+$zipcode,
+$bio,
+$salary,
+$preference,
+$email,
+$role,
+$password) {
+
+    
+    $passhash = password_hash($password, PASSWORD_DEFAULT);
 try{
     $sql = "INSERT INTO profiles 
 (username, realname, zipcode, bio, salary, preference, email, likes, role, passhash)
@@ -36,6 +38,7 @@ $stmt->execute([
 echo ("user created");
 } catch(PDOException) {
     echo("failed");
+}
 }
 
 ?>

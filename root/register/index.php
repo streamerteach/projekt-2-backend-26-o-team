@@ -29,9 +29,28 @@
             <form action="./register.php" method="post">
                 <p class="small">username</p>
                 <input type="text" name="username" required><br>
+                <p class="small">First Name</p>
+                <input type="text" name="firstname" required><br>
+                <p class="small">Last Name</p>
+                <input type="text" name="lastname" required><br>
+                <p class="small">ZIP code [ we store your data securely :-) ]</p>
+                <input type="text" name="zipcode" required><br>
+                <p class="small">Monthly salary</p>
+                <input type="text" name="salary" required><br>
+                <label class="small" for="preference">Preference</label>
+                <select name="preference" id="dropdown">
+                  <option value="0">All</option>
+                  <option value="1">Men</option>
+                  <option value="2">Women</option>
+                  <option value="3">Other</option>
+                </select>
                 <p class="small">e-mail</p>
                 <input type="email" name="email" required><br>
+                <p class="small">Bio</p>
+                <input type="text" name="bio" required><br>
                 <p class="small">password</p>
+                <input type="password" name="password" required><br>
+
                 <input type="submit" value="Register">
             </form>
         </div>
