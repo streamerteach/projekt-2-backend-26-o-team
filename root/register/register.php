@@ -16,6 +16,7 @@ if (isset($_REQUEST['username']) && isset($_REQUEST['email']) && isset($_REQUEST
     }
 
     
+    
 } else {
     //empty fields
     $_SESSION['register_error'] = "Username, Password and email are required!";
