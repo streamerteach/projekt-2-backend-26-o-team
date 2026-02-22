@@ -1,5 +1,4 @@
 <?php
-include "../scripts/databaseConnection.php";
 
 ini_set('display_errors', '1');
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
@@ -13,8 +12,8 @@ $bio,
 $salary,
 $preference,
 $email,
-$role,
-$password) {
+$password,
+$conn) {
 
     
     $passhash = password_hash($password, PASSWORD_DEFAULT);
