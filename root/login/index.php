@@ -21,7 +21,7 @@
                 unset($_SESSION['login_error']);
             }
             ?>
-            <form action="../scripts/loginHandler.php" method="post">
+            <form action="./login.php" method="post">
                 <p class="small">username</p>
                 <input type="text" name="username"><br>
                 <p class="small">password</p>

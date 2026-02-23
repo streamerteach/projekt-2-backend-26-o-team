@@ -34,7 +34,7 @@ $stmt->execute([
     ':email' => $email,
     ':passhash' => $passhash
 ]);
-echo ("user created");
+    echo ("user created");
 } catch(PDOException) {
     echo("failed");
 }

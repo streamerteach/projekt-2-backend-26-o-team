@@ -34,8 +34,8 @@ print($bio);
     }*/
 
 $conn = create_conn();
-
 create_user($username,$realname,$zipcode,$bio,$salary,$preference,$email,$password, $conn);
+$conn = null; // bye bye connection :) lived a long life.. R.I.P line 36 - line 38
     
 } else {
     //empty fields
