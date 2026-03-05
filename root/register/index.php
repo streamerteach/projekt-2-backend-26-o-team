@@ -18,15 +18,16 @@
             <h2>Create Your Account</h2>
             <?php
             if (isset($_SESSION['register_success'])) {
-                echo "<div style='color: green; margin-bottom: 15px; padding: 10px; border: 1px solid green; border-radius: 4px;'>" . htmlspecialchars($_SESSION['register_success']) . "</div>";
+                echo "<div id='registerSuccess'>" . htmlspecialchars($_SESSION['register_success']) . "</div>";
                 unset($_SESSION['register_success']);
             }
             if (isset($_SESSION['register_error'])) {
-                echo "<div style='color: red; margin-bottom: 15px; padding: 10px; border: 1px solid red; border-radius: 4px;'>" . htmlspecialchars($_SESSION['register_error']) . "</div>";
+                echo "<div id='registerError'>" . htmlspecialchars($_SESSION['register_error']) . "</div>";
                 unset($_SESSION['register_error']);
             }
             ?>
-            <form action="./register.php" method="post">
+            <div id="registerMessage" style="margin-bottom:15px;"></div>
+            <form id="registerForm" action="./register.php" method="post">
                 <p class="small">username</p>
                 <input type="text" name="username" required><br>
                 <p class="small">First Name</p>
@@ -39,10 +40,10 @@
                 <input type="text" name="salary" required><br>
                 <label class="small" for="preference">Preference</label>
                 <select name="preference" id="dropdown">
-                  <option value="0">All</option>
-                  <option value="1">Men</option>
-                  <option value="2">Women</option>
-                  <option value="3">Other</option>
+                    <option value="0">All</option>
+                    <option value="1">Men</option>
+                    <option value="2">Women</option>
+                    <option value="3">Other</option>
                 </select>
                 <p class="small">e-mail</p>
                 <input type="email" name="email" required><br>
@@ -53,6 +54,7 @@
 
                 <input type="submit" value="Register">
             </form>
+            <script src='./registerScript.js'></script>
         </div>
     </div>
 </body>

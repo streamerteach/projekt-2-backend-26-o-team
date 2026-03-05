@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 19, 2026 at 01:12 PM
+-- Generation Time: Mar 05, 2026 at 12:40 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -47,7 +47,8 @@ CREATE TABLE `profiles` (
 
 INSERT INTO `profiles` (`id`, `username`, `realname`, `zipcode`, `bio`, `salary`, `preference`, `email`, `likes`, `role`, `passhash`) VALUES
 (1, 'leppanee', 'Erik Leppänen', '04250', 'Wow it works. Awesome', 50, 1, 'leppanee@arcada.fi', 4, 4, '$2y$10$qUv8UDpfDY9v6W5skhrKJu.x5N9Q6HH/lQTX2i4hVnCYmAvNsqUsa'),
-(2, 'alfred', 'alfred krupp', '2216', 'bowow', 20000, 1, 'alfred@gmail.com', NULL, 1, '$2y$10$nn.bImGShEeIEnC5OuGGP.HvdmDVXyfxOy9zman9T2wEuE./lkHIa');
+(2, 'alfred', 'alfred krupp', '2216', 'bowow', 20000, 1, 'alfred@gmail.com', NULL, 1, '$2y$10$nn.bImGShEeIEnC5OuGGP.HvdmDVXyfxOy9zman9T2wEuE./lkHIa'),
+(10, 'jdkjsk', 'ase wqe', '11111', 'ost', 1, 0, 'thelord@gmail.com', NULL, 1, '$2y$10$Bgk/ZC2gYPm8a77bO3/NreYkfRVJrnnyrnbSkb6zRqkzwE6eeQHy.');
 
 --
 -- Indexes for dumped tables
@@ -69,7 +70,7 @@ ALTER TABLE `profiles`
 -- AUTO_INCREMENT for table `profiles`
 --
 ALTER TABLE `profiles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

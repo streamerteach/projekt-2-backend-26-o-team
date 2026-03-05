@@ -45,3 +45,19 @@ input[type="submit"] {
     border-radius: 5px;
     cursor: pointer;
 }
+
+#registerSuccess {
+    color: green; 
+    margin-bottom: 15px; 
+    padding: 10px; 
+    border: 1px solid green; 
+    border-radius: 4px;
+}
+
+#registerError {
+    color: red; 
+    margin-bottom: 15px; 
+    padding: 10px; 
+    border: 1px solid red; 
+    border-radius: 4px;
+}

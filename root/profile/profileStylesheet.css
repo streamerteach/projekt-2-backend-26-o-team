@@ -192,3 +192,48 @@ input[type="dateTime-local"]:focus {
     font-size: 28px;
     font-weight: bold;
 }
+
+/* added styles for editable profile information */
+.profileDataSection {
+    margin-top: 30px;
+}
+.profileDataSection input,
+.profileDataSection select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.profileDataSection button {
+    padding: 10px 20px;
+    background-color: #16132f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.profileDataSection button:hover {
+    background-color: #312b61;
+}
+.profileInfo {
+    margin-top: 20px;
+    text-align: left;
+}
+.profileInfo p {
+    margin: 5px 0;
+}
+
+/* deletion section styling */
+.deleteSection {
+    margin-top: 40px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+}
+.deleteSection .deleteButton {
+    background-color: #c0392b;
+    color: white;
+}
+.deleteSection .deleteButton:hover {
+    background-color: #e74c3c;
+}

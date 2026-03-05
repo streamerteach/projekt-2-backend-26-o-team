@@ -13,6 +13,17 @@ if (isset($_SESSION["loggedin"])) {
 include "../scripts/sessionhandler.php";
 include "../scripts/timeToDate.php";
 include "../scripts/imageHelper.php";
+include "../scripts/databaseConnection.php";
+
+//fetch current user details for display
+$userDetails = [];
+if (isset($_SESSION['username'])) {
+    $conn = create_conn();
+    $stmt = $conn->prepare("SELECT realname, bio, salary, preference, likes FROM profiles WHERE username = :u");
+    $stmt->execute([':u' => $_SESSION['username']]);
+    $userDetails = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+    $conn = null;
+}
 ?>
 
 <!DOCTYPE html>
@@ -50,6 +61,20 @@ include "../scripts/imageHelper.php";
                     <img src="<?php echo htmlspecialchars($profileImage); ?>" alt="Profile Image">
                 </div>
             <?php endif; ?>
+
+            <?php if (!empty($userDetails)): ?>
+                <div class="profileInfo">
+                    <p><strong>Real name:</strong> <?php echo htmlspecialchars($userDetails['realname']); ?></p>
+                    <p><strong>Bio:</strong> <?php echo htmlspecialchars($userDetails['bio']); ?></p>
+                    <p><strong>Salary:</strong> <?php echo htmlspecialchars($userDetails['salary']); ?></p>
+                    <p><strong>Preference:</strong> <?php
+                        $map = ['0'=> 'All', '1'=>'Men', '2'=>'Women', '3'=>'Other'];
+                        echo $map[$userDetails['preference']] ?? 'Unknown';
+                    ?></p>
+                    <p><strong>Likes:</strong> <?php echo htmlspecialchars($userDetails['likes'] ?? '0'); ?></p>
+                </div>
+            <?php endif; ?>
+
             <div>
                 <button type="button" onclick="location.href='../profile/editProfile.php'">Edit Profile</button>
                 <button type="button" onclick="location.href='../scripts/logout.php'">Logout</button>
