@@ -12,7 +12,6 @@ if (isset($_SESSION["loggedin"])) {
 //for debug and dev only
 include "../scripts/sessionhandler.php";
 include "../scripts/timeToDate.php";
-include "../scripts/imageHelper.php";
 include "../scripts/databaseConnection.php";
 
 //fetch current user details for display
@@ -58,7 +57,7 @@ if (isset($_SESSION['username'])) {
             ?>
 
                 <div class="profileImageDisplay">
-                    <img src="<?php echo htmlspecialchars($profileImage); ?>" alt="Profile Image">
+                    <img src="../media/upload/<?php echo $_SESSION["username"] ?>_profile.jpg" alt="Profile Image">
                 </div>
             <?php endif; ?>
 

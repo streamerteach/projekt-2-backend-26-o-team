@@ -14,8 +14,6 @@ header('Content-Type: application/json');
 */
 
 
-include "imageHelper.php";
-
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     http_response_code(405);
     echo json_encode(["success" => false, "message" => "POST Method required"]);
@@ -62,14 +60,7 @@ if (!in_array($_FILES["profileImage"]["type"], $mime_types)) {
     echo json_encode(["success" => false, "message" => "Invalid file type (jpeg,png,webp only)"]);
     exit;
 }
-//return mime type ex: image/png
-$finfo = new finfo(FILEINFO_MIME_TYPE);
-$mime_type = $finfo->file($_FILES["profileImage"]["tmp_name"]);
 
-//sanitize
-$pathinfo = pathinfo($_FILES["profileImage"]["name"]);
-$base = $pathinfo["filename"];
-$base = preg_replace("/[^\w-]/", "_", $base);
 $currentUser = $_SESSION["username"];
 
 if (empty($currentUser)) {
@@ -85,55 +76,56 @@ if (!preg_match("/^[a-zA-Z0-9_-]+$/", $currentUser)) {
     exit;
 }
 
-$userFolder = dirname(__DIR__) . DIRECTORY_SEPARATOR . "media" . DIRECTORY_SEPARATOR . "upload" . DIRECTORY_SEPARATOR . $currentUser;
+$uploadDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . "media" . DIRECTORY_SEPARATOR . "upload" . DIRECTORY_SEPARATOR;
 
-//check if user folder exists, if not create it
-if (!is_dir($userFolder)) {
-    if (!mkdir($userFolder, 0755, false)) { // nonrecursive cause you're fucked if everything else doesn't exist
-        http_response_code(500);
-        echo json_encode(["success" => false, "message" => "Failed to create user folder"]);
-        exit;
-    };
+$filename = $currentUser . "_profile.jpg";
+$destination = $uploadDir . $filename;
+
+if (file_exists($destination)) {
+    unlink($destination);
+} // delete if old image exists. users dont get to store older avatars
+
+
+
+// Load and convert image to JPG
+$sourceFile = $_FILES["profileImage"]["tmp_name"];
+$image = null;
+
+switch ($_FILES["profileImage"]["type"]) { // convert from specific format to jpg to reduce file sizes and make it less complex to display later
+    case 'image/png':
+        $image = imagecreatefrompng($sourceFile);
+        break;
+    case 'image/jpeg':
+        $image = imagecreatefromjpeg($sourceFile);
+        break;
+    case 'image/webp':
+        $image = imagecreatefromwebp($sourceFile);
+        break;
 }
 
-$filename = $base . "." . $pathinfo["extension"];
-$destination = $userFolder . DIRECTORY_SEPARATOR . $filename;
-
-$i = 1;
-
-while (file_exists($destination)) {
-    $filename = $base . "($i)." . $pathinfo["extension"];
-    $destination = $userFolder . DIRECTORY_SEPARATOR . $filename;
-
-    $i++;
-}
-if (!move_uploaded_file($_FILES["profileImage"]["tmp_name"], $destination)) {
+if (!$image) {
     http_response_code(500);
-    echo json_encode(["success" => false, "message" => "Can't move uploaded file"]);
+    echo json_encode(["success" => false, "message" => "Failed to process image"]);
     exit;
 }
 
-$relativePath = "../media/upload/" . $currentUser . "/" . $filename;
-$_SESSION["profileImage"] = $relativePath;
+$imagequality = rand(1, 100); // yes. this is what dating site users deserve. randomized image quality
 
-//latest
-$latestImage = getLatestProfileImage($userFolder);
-$latestImagePath = $latestImage
-    ? "../media/upload/" . $currentUser . "/" . $latestImage
-    : null;
+$saved = imagejpeg($image, $destination, $imagequality);
+imagedestroy($image);
 
-//second latest
-$secondImage = getUserSecondImagePath($userFolder);
-$secondImagePath = $secondImage
-    ? "../media/upload/" . $currentUser . "/" . $secondImage
-    : null;
+if (!$saved) {
+    http_response_code(500);
+    echo json_encode(["success" => false, "message" => "Failed to save image"]);
+    exit;
+}
 
+$relativePath = "../media/upload/" . $filename;
+$_SESSION["profileImage"] = $relativePath; // getting rid of profileImage session value soon but whatever
 
 echo json_encode([
     "success" => true,
     "message" => "Image uploaded successfully",
     "filepath" => $relativePath,
-    "latestImage" => $latestImagePath,
-    "secondLatestImage" => $secondImagePath
-
+    "filename" => $filename
 ]);

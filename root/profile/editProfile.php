@@ -1,6 +1,5 @@
 <?php
 include "../scripts/sessionhandler.php";
-include "../scripts/imageHelper.php";
 include "../scripts/databaseConnection.php";
 
 //load current profile values for the user
@@ -41,25 +40,8 @@ if (isset($_SESSION['username'])) {
             <div class="profileImageSection">
                 <h3>Profile Image</h3>
                 <div class="profileImagePreviewContainer">
-                    <?php
-                    // get latest image from folder first fallback to session
-                    $profileImage = getUserImagePath($_SESSION["username"] ?? null);
-                    if (!$profileImage && isset($_SESSION["profileImage"])) {
-                        $profileImage = $_SESSION["profileImage"];
-                    }
-                    $secondProfileImage = getUserSecondImagePath($_SESSION["username"] ?? null);
-                    if (!$secondProfileImage && isset($_SESSION["secondProfileImage"])) {
-                        $secondProfileImage = $_SESSION["secondProfileImage"];
-                    }
 
-                    if ($profileImage): ?>
-                        <img id="profileImagePreview" src="<?php echo htmlspecialchars($profileImage); ?>" alt="Profile Image">
-                    <?php endif; ?>
-                    <?php
-                    if ($secondProfileImage): //gross php slop
-                    ?>
-                        <img id="oldProfileImagePreview" src="<?php echo htmlspecialchars($secondProfileImage); ?>" alt="Second Latest Image">
-                    <?php endif; ?>
+                    <img id="profileImagePreview" src="../media/upload/<?php echo $_SESSION["username"] ?>_profile.jpg">
                 </div>
 
                 <div class="imageUploadForm">

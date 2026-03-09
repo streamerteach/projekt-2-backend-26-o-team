@@ -1,6 +1,5 @@
 <?php 
 include "../scripts/sessionhandler.php";
-include "../scripts/databaseConnection.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
