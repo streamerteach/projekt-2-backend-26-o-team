@@ -46,20 +46,10 @@ if (isset($_SESSION['username'])) {
                 print("<div id='user'>Logged in as: <bold style='font-weight:bold;'>" . $_SESSION["username"] . "<bold></div>")
             ?>
 
-            <?php
-            // get latest image from folder first fallback to session
-            $profileImage = getUserImagePath($_SESSION["username"] ?? null);
-            if (!$profileImage && isset($_SESSION["profileImage"])) {
-                $profileImage = $_SESSION["profileImage"];
-            }
-
-            if ($profileImage):
-            ?>
-
                 <div class="profileImageDisplay">
                     <img src="../media/upload/<?php echo $_SESSION["username"] ?>_profile.jpg" alt="Profile Image">
                 </div>
-            <?php endif; ?>
+
 
             <?php if (!empty($userDetails)): ?>
                 <div class="profileInfo">

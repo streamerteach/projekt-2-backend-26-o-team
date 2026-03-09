@@ -20,6 +20,9 @@ if (!$user) {
 if (password_verify($password, $user['passhash'])) {
     $_SESSION["username"] = $username;
     $_SESSION["loggedin"] = true;
+    $_SESSION["preference"] = $user['preference'];
+    $_SESSION["id"] = $user['id'];
+
     header("Location: ../profile/index.php");
     exit;
 } else {
