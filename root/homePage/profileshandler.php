@@ -14,7 +14,7 @@ session_start();
 $username = $_SESSION["username"];
 $user_preference = $_SESSION['preference'] ?? null;
 
-
+   
 try {
     $sql = "SELECT 
             p.id, 
