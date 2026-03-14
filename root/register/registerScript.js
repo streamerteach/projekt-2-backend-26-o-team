@@ -22,3 +22,5 @@ document.getElementById('registerForm').addEventListener('submit', function (e) 
             console.error(err);
         });
 });
+
+//could be moved to scripts but im lazy

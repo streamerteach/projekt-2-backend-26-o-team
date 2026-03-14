@@ -29,7 +29,7 @@ try {
             p.role 
             FROM profiles p 
             WHERE 1=1 ";
-    
+
     $params = [];
 
     // dont include yourself lol
@@ -41,21 +41,21 @@ try {
               LIMIT :limit OFFSET :offset";
 
     $stmt = $pdo->prepare($sql);
-    
+
     foreach ($params as $key => $value) {
         $stmt->bindValue($key, $value);
     }
-    
+
     $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    
+
     $stmt->execute();
     $profiles = $stmt->fetchAll();
 
     $countSql = "SELECT COUNT(*) as total 
                  FROM profiles p 
                  WHERE 1=1 ";
-    
+
     $countParams = [];
 
     $countSql .= " AND p.username != :cur_username ";
@@ -71,17 +71,16 @@ try {
     // Calculate if there are more results
     $hasMore = ($offset + $limit) < $totalCount;
 
-// Format the response
-foreach ($profiles as &$profile) {
+    // Format the response
+    foreach ($profiles as &$profile) {
 
-    $profile['salary_formatted'] = '$' . number_format($profile['salary']);
+        $profile['salary_formatted'] = '$' . number_format($profile['salary']);
 
-    unset($profile['passhash']); // do not remove ever!!
-}
-} 
-
-catch(Exception $e) {
-   echo 'Message: ' .$e->getMessage();
+        unset($profile['passhash']); // do not remove ever!!
+    }
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => $e->getMessage()]);
 }
 
 echo json_encode([
@@ -90,4 +89,3 @@ echo json_encode([
     'chunk' => $chunk,
     'totalCount' => (int)$totalCount
 ]);
-?>
