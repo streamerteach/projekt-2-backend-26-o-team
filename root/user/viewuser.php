@@ -69,7 +69,141 @@ $prefMap = [
                 <button type="button" onclick="window.history.back();">Back</button>
                 <button type="button" onclick="location.href='../homePage/index.php';">Home</button>
             </div>
+
+            <div id="profileCommentsSection">
+                <h2>Comments</h2>
+                <form id="commentForm">
+                    <textarea id="commentText" placeholder="Write your comment..." rows="4" cols="50" required></textarea>
+                    <input type="hidden" id="parentCommentId" value="">
+                    <button type="submit">Post Comment</button>
+                </form>
+                <div id="commentsContainer"></div>
+            </div>
+
         </div>
     </div>
+
+    <script>
+        const profileOwnerId = <?php echo (int)$user['id']; ?>;
+        const profileOwnerUsername = <?php echo json_encode($user['username']); ?>;
+
+        async function fetchComments() {
+            const response = await fetch(`../scripts/profile_comments.php?profile_owner_id=${profileOwnerId}`);
+            const json = await response.json();
+            if (json.error) {
+                console.error(json.error);
+                return;
+            }
+            renderComments(json.comments);
+        }
+
+        async function fetchReplies(parentCommentId) {
+            const response = await fetch(`../scripts/profile_comments.php?parent_comment_id=${parentCommentId}`);
+            const json = await response.json();
+            if (json.error) {
+                console.error(json.error);
+                return [];
+            }
+            return json.replies || [];
+        }
+
+        function renderComments(comments) {
+            const container = document.getElementById('commentsContainer');
+            container.innerHTML = '';
+
+            if (comments.length === 0) {
+                container.innerHTML = '<p>No comments yet. Be the first to comment!</p>';
+                return;
+            }
+
+            comments.forEach(comment => {
+                const commentEl = document.createElement('div');
+                commentEl.className = 'profile-comment';
+                commentEl.innerHTML = `
+                    <div class="comment-meta"><strong>${escapeHtml(comment.author_username || 'Unknown')}</strong> <small>${escapeHtml(comment.created_at)}</small></div>
+                    <div class="comment-text">${escapeHtml(comment.content)}</div>
+                    <div class="comment-actions">
+                        <button class="comment-reply-btn" data-comment-id="${comment.id}">Reply</button>
+                        ${comment.reply_count > 0 ? `<button class="comment-show-replies-btn" data-comment-id="${comment.id}">Show ${comment.reply_count} repl${comment.reply_count > 1 ? 'ies' : 'y'}</button>` : ''}
+                    </div>
+                    <div id="replies-${comment.id}" class="comment-replies"></div>
+                `;
+
+                container.appendChild(commentEl);
+            });
+
+            // Attach event listeners
+            container.querySelectorAll('.comment-reply-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const parentId = btn.getAttribute('data-comment-id');
+                    document.getElementById('parentCommentId').value = parentId;
+                    document.getElementById('commentText').focus();
+                });
+            });
+
+            container.querySelectorAll('.comment-show-replies-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const parentId = btn.getAttribute('data-comment-id');
+                    const repliesContainer = document.getElementById(`replies-${parentId}`);
+                    if (repliesContainer.innerHTML.trim() !== '') {
+                        repliesContainer.innerHTML = '';
+                        btn.textContent = `Show ${comments.find(c => c.id == parentId).reply_count} repl${comments.find(c => c.id == parentId).reply_count > 1 ? 'ies' : 'y'}`;
+                        return;
+                    }
+                    const replies = await fetchReplies(parentId);
+                    if (replies.length === 0) {
+                        repliesContainer.innerHTML = '<small>No replies yet.</small>';
+                        return;
+                    }
+                    repliesContainer.innerHTML = '';
+                    replies.forEach(reply => {
+                        const replyEl = document.createElement('div');
+                        replyEl.className = 'comment-reply';
+                        replyEl.innerHTML = `
+                            <div class="comment-meta"><strong>${escapeHtml(reply.author_username || 'Unknown')}</strong> <small>${escapeHtml(reply.created_at)}</small></div>
+                            <div class="comment-text">${escapeHtml(reply.content)}</div>
+                        `;
+                        repliesContainer.appendChild(replyEl);
+                    });
+                    btn.textContent = 'Hide replies';
+                });
+            });
+        }
+
+        function escapeHtml(text) {
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        document.getElementById('commentForm').addEventListener('submit', async event => {
+            event.preventDefault();
+            const content = document.getElementById('commentText').value.trim();
+            const parentCommentId = document.getElementById('parentCommentId').value || null;
+            if (!content) return;
+
+            const response = await fetch('../scripts/profile_comments.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ profile_owner_id: profileOwnerId, profile_owner_username: profileOwnerUsername, parent_comment_id: parentCommentId, content })
+            });
+            const json = await response.json();
+            if (json.error) {
+                alert('Error: ' + json.error);
+                return;
+            }
+
+            document.getElementById('commentText').value = '';
+            document.getElementById('parentCommentId').value = '';
+            await fetchComments();
+        });
+
+        // Validation aid
+        if (!profileOwnerId || profileOwnerId <= 0) {
+            console.error('profileOwnerId is invalid:', profileOwnerId, 'profileOwnerUsername:', profileOwnerUsername);
+        }
+
+
+        fetchComments();
+    </script>
 </body>
 </html>

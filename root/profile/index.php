@@ -18,7 +18,7 @@ include "../scripts/databaseConnection.php";
 $userDetails = [];
 if (isset($_SESSION['username'])) {
     $conn = create_conn();
-    $stmt = $conn->prepare("SELECT realname, bio, salary, preference, likes FROM profiles WHERE username = :u");
+    $stmt = $conn->prepare("SELECT id, realname, bio, salary, preference, likes FROM profiles WHERE username = :u");
     $stmt->execute([':u' => $_SESSION['username']]);
     $userDetails = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     $conn = null;
@@ -69,6 +69,18 @@ if (isset($_SESSION['username'])) {
                 <button type="button" onclick="location.href='../scripts/logout.php'">Logout</button>
                 <button onclick="location.href='../scripts/cube.php'">Cube</button>
             </div>
+
+            <div id="profileCommentsSection">
+                <h2>Your Profile Comments</h2>
+                <form id="profileCommentForm">
+                    <textarea id="profileCommentText" placeholder="Write a comment on your profile (for testing or moderation)" rows="4" cols="50" required></textarea>
+                    <input type="hidden" id="profileParentCommentId" value="">
+                    <button type="submit">Post Comment</button>
+                </form>
+
+                <div id="profileCommentsContainer"></div>
+            </div>
+
         </div>
         <div id="dateTimeBox">
             <form action="../scripts/timeToDate.php" method="get">
@@ -79,7 +91,117 @@ if (isset($_SESSION['username'])) {
             <div id="output">
             </div>
         </div>
+
         <script src="../scripts/timeDifference.js"></script>
+
+        <script>
+            const profileOwnerId = <?php echo json_encode($userDetails['id'] ?? null); ?>;
+
+            async function loadProfileComments() {
+                const res = await fetch(`../scripts/profile_comments.php?profile_owner_id=${profileOwnerId}`);
+                const data = await res.json();
+                if (data.error) {
+                    document.getElementById('profileCommentsContainer').innerHTML = `<p>Error loading comments: ${data.error}</p>`;
+                    return;
+                }
+                renderProfileComments(data.comments);
+            }
+
+            async function loadReplies(commentId) {
+                const res = await fetch(`../scripts/profile_comments.php?parent_comment_id=${commentId}`);
+                const data = await res.json();
+                return data.replies || [];
+            }
+
+            function renderProfileComments(comments) {
+                const container = document.getElementById('profileCommentsContainer');
+                container.innerHTML = '';
+
+                if (!Array.isArray(comments) || comments.length === 0) {
+                    container.innerHTML = '<p>No comments yet on your profile.</p>';
+                    return;
+                }
+
+                comments.forEach(comment => {
+                    const el = document.createElement('div');
+                    el.className = 'profile-comment';
+                    el.innerHTML = `
+                        <div class="comment-meta"><strong>${escapeHtml(comment.author_username || 'Unknown')}</strong> <small>${escapeHtml(comment.created_at)}</small></div>
+                        <div class="comment-text">${escapeHtml(comment.content)}</div>
+                        <div class="comment-actions">
+                            <button type="button" class="reply-button" data-id="${comment.id}">Reply</button>
+                            ${comment.reply_count > 0 ? `<button type="button" class="show-replies-button" data-id="${comment.id}">Show ${comment.reply_count} repl${comment.reply_count > 1 ? 'ies' : 'y'}</button>` : ''}
+                        </div>
+                        <div id="replies-${comment.id}" class="comment-replies"></div>
+                    `;
+                    container.appendChild(el);
+                });
+
+                container.querySelectorAll('.reply-button').forEach(button => {
+                    button.addEventListener('click', () => {
+                        document.getElementById('profileParentCommentId').value = button.dataset.id;
+                        document.getElementById('profileCommentText').focus();
+                    });
+                });
+
+                container.querySelectorAll('.show-replies-button').forEach(button => {
+                    button.addEventListener('click', async () => {
+                        const commentId = button.dataset.id;
+                        const replyContainer = document.getElementById(`replies-${commentId}`);
+                        if (replyContainer.innerHTML) {
+                            replyContainer.innerHTML = '';
+                            button.textContent = `Show ${comment.reply_count} repl${comment.reply_count > 1 ? 'ies' : 'y'}`;
+                            return;
+                        }
+                        const replies = await loadReplies(commentId);
+                        if (!replies.length) {
+                            replyContainer.innerHTML = '<small>No replies.</small>';
+                            return;
+                        }
+                        replies.forEach(reply => {
+                            const r = document.createElement('div');
+                            r.className = 'comment-reply';
+                            r.innerHTML = `
+                                <div class="comment-meta"><strong>${escapeHtml(reply.author_username || 'Unknown')}</strong> <small>${escapeHtml(reply.created_at)}</small></div>
+                                <div class="comment-text">${escapeHtml(reply.content)}</div>
+                            `;
+                            replyContainer.appendChild(r);
+                        });
+                        button.textContent = 'Hide replies';
+                    });
+                });
+            }
+
+            function escapeHtml(text) {
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+                return String(text).replace(/[&<>"']/g, m => map[m]);
+            }
+
+            document.getElementById('profileCommentForm').addEventListener('submit', async event => {
+                event.preventDefault();
+                const content = document.getElementById('profileCommentText').value.trim();
+                if (!content) return;
+
+                const parentCommentId = document.getElementById('profileParentCommentId').value || null;
+
+                const response = await fetch('../scripts/profile_comments.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ profile_owner_id: profileOwnerId, parent_comment_id: parentCommentId, content })
+                });
+                const json = await response.json();
+                if (json.error) {
+                    alert('Error: ' + json.error);
+                    return;
+                }
+
+                document.getElementById('profileCommentText').value = '';
+                document.getElementById('profileParentCommentId').value = '';
+                await loadProfileComments();
+            });
+
+            loadProfileComments();
+        </script>
 </body>
 
 </html>

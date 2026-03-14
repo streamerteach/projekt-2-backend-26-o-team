@@ -237,3 +237,63 @@ input[type="dateTime-local"]:focus {
 .deleteSection .deleteButton:hover {
     background-color: #e74c3c;
 }
+
+/* profile comments */
+#profileCommentsSection {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 800px;
+}
+#profileCommentsSection form {
+    margin-bottom: 20px;
+}
+#profileCommentsSection textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical;
+}
+#profileCommentsSection button {
+    margin-top: 8px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 5px;
+    background-color: #16132f;
+    color: #fff;
+    cursor: pointer;
+}
+#profileCommentsSection button:hover {
+    background-color: #312b61;
+}
+.profile-comment, .comment-reply {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #f0f5ff;
+}
+.comment-reply {
+    margin-left: 20px;
+    background: #f8faff;
+}
+.comment-meta {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+.comment-text {
+    margin-bottom: 6px;
+}
+.comment-actions {
+    display: flex;
+    gap: 8px;
+}
+.comment-actions button {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+}
+.comment-replies {
+    margin-top: 8px;
+}
+
