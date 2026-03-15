@@ -10,11 +10,13 @@ document.getElementById('profileDataForm').addEventListener('submit', function (
     })
         .then(r => r.json())
         .then(json => {
-            msg.style.color = json.success ? 'green' : 'red';
+            msg.classList.remove('message-success', 'message-error');
+            msg.classList.add(json.success ? 'message-success' : 'message-error');
             msg.textContent = json.message;
         })
         .catch(err => {
-            msg.style.color = 'red';
+            msg.classList.remove('message-success');
+            msg.classList.add('message-error');
             msg.textContent = 'Network/server error.';
             console.error(err);
         });

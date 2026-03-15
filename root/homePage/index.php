@@ -26,7 +26,7 @@ if (isset($_SESSION['username'])) {
     <link rel="stylesheet" href="./homePageStyle.css">
 </head>
 
-<body>
+<body data-user-role="<?php echo (int)$userRole; ?>">
     <?php include "../scripts/nav.php"; ?>
     <div id="centeringDiv">
         <h2>Welcome to the Home Page</h2>
@@ -40,9 +40,7 @@ if (isset($_SESSION['username'])) {
         <h3 id="errorMessage">errorrr</h3>
     </div>
 </body>
-<script>
-    window.currentUserRole = <?php echo json_encode($userRole); ?>;
-</script>
+<script src="./setUserRole.js"></script>
 <script src="./profile_loader.js"></script>
 <script type="module" src="../mainScript.js"></script>
 

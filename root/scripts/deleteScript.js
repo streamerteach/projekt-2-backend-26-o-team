@@ -14,7 +14,8 @@ document.getElementById('deleteForm').addEventListener('submit', function (e) {
     })
         .then(r => r.json())
         .then(json => {
-            msg.style.color = json.success ? 'green' : 'red';
+            msg.classList.remove('message-success', 'message-error');
+            msg.classList.add(json.success ? 'message-success' : 'message-error');
             msg.textContent = json.message;
             if (json.success) {
                 //after a brief pause redirect to home/landing page
@@ -24,7 +25,8 @@ document.getElementById('deleteForm').addEventListener('submit', function (e) {
             }
         })
         .catch(err => {
-            msg.style.color = 'red';
+            msg.classList.remove('message-success');
+            msg.classList.add('message-error');
             msg.textContent = 'Network/server error.';
             console.error(err);
         });

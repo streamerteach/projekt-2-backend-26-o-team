@@ -34,16 +34,17 @@ $stmt = $conn->prepare("SELECT id, realname, bio, salary, preference, likes, rol
     <title>Profile</title>
     <link rel="stylesheet" href="../mainStyle.css">
     <link rel="stylesheet" href="../profile/profileStylesheet.css">
+    <link rel="stylesheet" href="../scripts/scripts.css">
 </head>
 
-<body>
+<body data-profile-owner-id="<?php echo (int)($userDetails['id'] ?? 0); ?>" data-current-user-role="<?php echo (int)($userDetails['role'] ?? 0); ?>">
     <?php include "../scripts/nav.php"; ?>
     <div id="pageContentCentering">
         <div id="profileBox">
 
             <?php
             if (isset($_SESSION["username"]))
-                print("<div id='user'>Logged in as: <bold style='font-weight:bold;'>" . $_SESSION["username"] . "<bold></div>")
+                print("<div id='user'>Logged in as: <span class='bold-text'>" . $_SESSION["username"] . "</span></div>")
             ?>
 
                 <div class="profileImageDisplay">
@@ -64,7 +65,7 @@ $stmt = $conn->prepare("SELECT id, realname, bio, salary, preference, likes, rol
                     <div id="profileVoteArea">
                         <button id="profileLikeBtn" type="button">Like</button>
                         <button id="profileDislikeBtn" type="button">Dislike</button>
-                        <p id="profileVoteStatus" style="font-size:0.9rem; margin:5px 0 0;">You have not voted yet.</p>
+                        <p id="profileVoteStatus" class="vote-status">You have not voted yet.</p>
                     </div>
                 </div>
             <?php endif; ?>
@@ -98,174 +99,7 @@ $stmt = $conn->prepare("SELECT id, realname, bio, salary, preference, likes, rol
         </div>
 
         <script src="../scripts/timeDifference.js"></script>
-
-        <script>
-            const profileOwnerId = <?php echo json_encode($userDetails['id'] ?? null); ?>;
-            const currentUserRole = <?php echo json_encode($userDetails['role'] ?? 0); ?>;
-
-            async function loadProfileComments() {
-                const res = await fetch(`../scripts/profile_comments.php?profile_owner_id=${profileOwnerId}`);
-                const data = await res.json();
-                if (data.error) {
-                    document.getElementById('profileCommentsContainer').innerHTML = `<p>Error loading comments: ${data.error}</p>`;
-                    return;
-                }
-                renderProfileComments(data.comments);
-            }
-
-            async function loadReplies(commentId) {
-                const res = await fetch(`../scripts/profile_comments.php?parent_comment_id=${commentId}`);
-                const data = await res.json();
-                return data.replies || [];
-            }
-
-            function renderProfileComments(comments) {
-                const container = document.getElementById('profileCommentsContainer');
-                container.innerHTML = '';
-
-                if (!Array.isArray(comments) || comments.length === 0) {
-                    container.innerHTML = '<p>No comments yet on your profile.</p>';
-                    return;
-                }
-
-                comments.forEach(comment => {
-                    const el = document.createElement('div');
-                    el.className = 'profile-comment';
-                    el.innerHTML = `
-                        <div class="comment-meta"><strong>${escapeHtml(comment.author_username || 'Unknown')}</strong> <small>${escapeHtml(comment.created_at)}</small></div>
-                        <div class="comment-text">${escapeHtml(comment.content)}</div>
-                        <div class="comment-actions">
-                            <button type="button" class="reply-button" data-id="${comment.id}">Reply</button>
-                            ${comment.reply_count > 0 ? `<button type="button" class="show-replies-button" data-id="${comment.id}">Show ${comment.reply_count} repl${comment.reply_count > 1 ? 'ies' : 'y'}</button>` : ''}
-                            ${currentUserRole >= 3 ? `<button type="button" class="comment-delete-btn" data-id="${comment.id}">Delete</button>` : ''}
-                        </div>
-                        <div id="replies-${comment.id}" class="comment-replies"></div>
-                    `;
-                    container.appendChild(el);
-                });
-
-                container.querySelectorAll('.reply-button').forEach(button => {
-                    button.addEventListener('click', () => {
-                        document.getElementById('profileParentCommentId').value = button.dataset.id;
-                        document.getElementById('profileCommentText').focus();
-                    });
-                });
-
-                container.querySelectorAll('.show-replies-button').forEach(button => {
-                    button.addEventListener('click', async () => {
-                        const commentId = button.dataset.id;
-                        const replyContainer = document.getElementById(`replies-${commentId}`);
-                        if (replyContainer.innerHTML) {
-                            replyContainer.innerHTML = '';
-                            button.textContent = `Show ${comment.reply_count} repl${comment.reply_count > 1 ? 'ies' : 'y'}`;
-                            return;
-                        }
-                        const replies = await loadReplies(commentId);
-                        if (!replies.length) {
-                            replyContainer.innerHTML = '<small>No replies.</small>';
-                            return;
-                        }
-                        replies.forEach(reply => {
-                            const r = document.createElement('div');
-                            r.className = 'comment-reply';
-                            r.innerHTML = `
-                                <div class="comment-meta"><strong>${escapeHtml(reply.author_username || 'Unknown')}</strong> <small>${escapeHtml(reply.created_at)}</small></div>
-                                <div class="comment-text">${escapeHtml(reply.content)}</div>
-                            `;
-                            replyContainer.appendChild(r);
-                        });
-                        button.textContent = 'Hide replies';
-                    });
-                });
-
-                container.querySelectorAll('.comment-delete-btn').forEach(button => {
-                    button.addEventListener('click', async () => {
-                        const commentId = button.dataset.id;
-                        const response = await fetch('../scripts/profile_comments.php', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ action: 'delete', comment_id: commentId })
-                        });
-                        const result = await response.json();
-                        if (result.error) {
-                            alert('Error deleting comment: ' + result.error);
-                            return;
-                        }
-                        await loadProfileComments();
-                    });
-                });
-            }
-
-            function escapeHtml(text) {
-                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-                return String(text).replace(/[&<>"']/g, m => map[m]);
-            }
-
-            async function fetchLikeState() {
-                const res = await fetch(`../scripts/profile_like.php?profile_owner_id=${profileOwnerId}`);
-                const data = await res.json();
-                if (data.error) {
-                    console.error('Like state error', data.error);
-                    return;
-                }
-                document.getElementById('profileLikeCount').textContent = data.likes;
-                const status = document.getElementById('profileVoteStatus');
-                if (data.user_vote === 1) {
-                    status.textContent = 'You liked your profile.';
-                } else if (data.user_vote === -1) {
-                    status.textContent = 'You disliked your profile.';
-                } else {
-                    status.textContent = 'You have not voted yet.';
-                }
-                document.getElementById('profileLikeBtn').disabled = data.user_vote === 1;
-                document.getElementById('profileDislikeBtn').disabled = data.user_vote === -1;
-            }
-
-            async function setProfileVote(action) {
-                const res = await fetch('../scripts/profile_like.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ profile_owner_id: profileOwnerId, action })
-                });
-                const data = await res.json();
-                if (data.error) {
-                    alert('Error: ' + data.error);
-                    return;
-                }
-                await fetchLikeState();
-                await loadProfileComments();
-            }
-
-            document.getElementById('profileLikeBtn').addEventListener('click', () => setProfileVote('like'));
-            document.getElementById('profileDislikeBtn').addEventListener('click', () => setProfileVote('dislike'));
-
-            fetchLikeState();
-
-            document.getElementById('profileCommentForm').addEventListener('submit', async event => {
-                event.preventDefault();
-                const content = document.getElementById('profileCommentText').value.trim();
-                if (!content) return;
-
-                const parentCommentId = document.getElementById('profileParentCommentId').value || null;
-
-                const response = await fetch('../scripts/profile_comments.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ profile_owner_id: profileOwnerId, parent_comment_id: parentCommentId, content })
-                });
-                const json = await response.json();
-                if (json.error) {
-                    alert('Error: ' + json.error);
-                    return;
-                }
-
-                document.getElementById('profileCommentText').value = '';
-                document.getElementById('profileParentCommentId').value = '';
-                await loadProfileComments();
-            });
-
-            loadProfileComments();
-        </script>
+        <script src="../scripts/profileSelf.js"></script>
 </body>
 
 </html>

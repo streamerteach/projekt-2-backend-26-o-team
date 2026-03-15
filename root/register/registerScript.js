@@ -10,14 +10,16 @@ document.getElementById('registerForm').addEventListener('submit', function (e) 
     })
         .then(r => r.json())
         .then(json => {
-            msgDiv.style.color = json.success ? 'green' : 'red';
+            msgDiv.classList.remove('message-success', 'message-error');
+            msgDiv.classList.add(json.success ? 'message-success' : 'message-error');
             msgDiv.textContent = json.message;
             if (json.success) {
                 form.reset();
             }
         })
         .catch(err => {
-            msgDiv.style.color = 'red';
+            msgDiv.classList.remove('message-success');
+            msgDiv.classList.add('message-error');
             msgDiv.textContent = 'Network or server error.';
             console.error(err);
         });

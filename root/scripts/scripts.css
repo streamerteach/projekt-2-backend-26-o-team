@@ -1,0 +1,69 @@
+:root {
+    --success-color: #2f8f2f;
+    --error-color: #c0392b;
+    --info-color: #303030;
+}
+
+/* Global message styles */
+.message-inline {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.message-success {
+    color: var(--success-color);
+}
+
+.message-error {
+    color: var(--error-color);
+}
+
+.message-info {
+    color: var(--info-color);
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.vote-status {
+    margin-top: 8px;
+    font-size: 0.9rem;
+}
+
+/* controls for script parts */
+.softban-button-container {
+    margin-top: 8px;
+}
+
+.softban-toggle-btn {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    background-color: #c0392b;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.softban-toggle-btn:hover {
+    background-color: #a93226;
+}
+
+.uploadMessage {
+    display: none;
+    margin-top: 8px;
+}
+
+.uploadMessage.show {
+    display: block;
+}
+
+.show {
+    display: block !important;
+}

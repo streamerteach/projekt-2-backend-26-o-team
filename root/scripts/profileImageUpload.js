@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
 
                 uploadMessage.classList.remove('success', 'error');
-                uploadMessage.style.display = 'block';
+                uploadMessage.classList.add('show');
 
                 if (data.success) {
                     uploadMessage.classList.add('success');
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     //second latest image
                     if (oldProfileImagePreview && data.secondLatestImage) {
                         oldProfileImagePreview.src = data.secondLatestImage + '?t=' + Date.now();
-                        oldProfileImagePreview.style.display = 'block';
+                        oldProfileImagePreview.classList.add('show');
                     }
 
                     uploadForm.reset();
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => { //iam eror
                 uploadMessage.classList.remove('success');
                 uploadMessage.classList.add('error');
-                uploadMessage.style.display = 'block';
+                uploadMessage.classList.add('show');
                 uploadMessage.textContent = 'Error: ' + error.message;
             });
     });

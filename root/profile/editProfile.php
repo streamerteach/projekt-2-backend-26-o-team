@@ -29,6 +29,7 @@ if (isset($_SESSION['username'])) {
     <title>Edit Profile</title>
     <link rel="stylesheet" href="../mainStyle.css">
     <link rel="stylesheet" href="../profile/profileStylesheet.css">
+    <link rel="stylesheet" href="../scripts/scripts.css">
 </head>
 
 <body>
@@ -57,7 +58,7 @@ if (isset($_SESSION['username'])) {
 
             <div class="profileDataSection">
                 <h3>Profile Information</h3>
-                <div id="profileDataMessage" style="margin-bottom:10px;"></div>
+                <div id="profileDataMessage" class="message-inline"></div>
                 <form id="profileDataForm" action="../scripts/updateProfile.php" method="post">
                     <p class="small">Bio</p>
                     <input type="text" name="bio" value="<?php echo htmlspecialchars($editBio); ?>" required><br>
@@ -76,7 +77,7 @@ if (isset($_SESSION['username'])) {
 
             <div class="deleteSection">
                 <h3>Danger Zone</h3>
-                <div id="deleteMessage" style="margin-bottom:10px;"></div>
+                <div id="deleteMessage" class="message-inline"></div>
                 <form id="deleteForm" action="../scripts/deleteProfile.php" method="post">
                     <p class="small">Enter password to confirm deletion</p>
                     <input type="password" name="password" required><br><br>

@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cube</title>
     <link rel="stylesheet" href="./cube.css">
+    <link rel="stylesheet" href="./scripts.css">
 </head>
 <!-- -->
-<body style="height: 100%;">
+<body class="full-height">
     <h1>Cube</h1>
     <button onclick="location.href='../profile/index.php'">Back to Profile</button>
     <div id="container">

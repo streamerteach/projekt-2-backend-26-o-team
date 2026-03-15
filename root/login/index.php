@@ -8,6 +8,7 @@
     <title>Login</title>
     <link rel="stylesheet" href="../mainStyle.css">
     <link rel="stylesheet" href="./loginStylesheet.css">
+    <link rel="stylesheet" href="../scripts/scripts.css">
 
 </head>
 
@@ -17,7 +18,7 @@
         <div id="loginForm">
             <?php
             if (isset($_SESSION['login_error'])) {
-                echo "<div style='color: red; margin-bottom: 15px;'>" . htmlspecialchars($_SESSION['login_error']) . "</div>";
+                echo "<div class='message-inline message-error'>" . htmlspecialchars($_SESSION['login_error']) . "</div>";
                 unset($_SESSION['login_error']);
             }
             ?>
@@ -31,7 +32,7 @@
             </form>
             <?php
             if (isset($_SESSION['error'])) {
-                echo "<p style='color:red'>" . $_SESSION['error'] . "</p>";
+                echo "<p class='message-error'>" . htmlspecialchars($_SESSION['error']) . "</p>";
                 unset($_SESSION['error']);
             } ?>
         </div>

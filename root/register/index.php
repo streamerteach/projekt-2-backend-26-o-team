@@ -9,6 +9,7 @@
     <title>Register</title>
     <link rel="stylesheet" href="../mainStyle.css">
     <link rel="stylesheet" href="./registerStylesheet.css">
+    <link rel="stylesheet" href="../scripts/scripts.css">
 </head>
 
 <body>
@@ -26,7 +27,7 @@
                 unset($_SESSION['register_error']);
             }
             ?>
-            <div id="registerMessage" style="margin-bottom:15px;"></div>
+            <div id="registerMessage" class="message-inline"></div>
             <form id="registerForm" action="./register.php" method="post">
                 <p class="small">username</p>
                 <input type="text" name="username" required><br>
