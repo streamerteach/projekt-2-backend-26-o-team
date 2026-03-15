@@ -1,4 +1,19 @@
-<?php include "../scripts/sessionhandler.php"; ?>
+<?php
+include "../scripts/sessionhandler.php";
+include "../scripts/databaseConnection.php";
+
+$userRole = 0;
+if (isset($_SESSION['username'])) {
+    $conn = create_conn();
+    $stmt = $conn->prepare('SELECT role FROM profiles WHERE username = :username LIMIT 1');
+    $stmt->execute([':username' => $_SESSION['username']]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        $userRole = (int) $row['role'];
+    }
+    $conn = null;
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +40,9 @@
         <h3 id="errorMessage">errorrr</h3>
     </div>
 </body>
+<script>
+    window.currentUserRole = <?php echo json_encode($userRole); ?>;
+</script>
 <script src="./profile_loader.js"></script>
 <script type="module" src="../mainScript.js"></script>
 

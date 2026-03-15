@@ -11,10 +11,22 @@ $offset = ($chunk - 1) * $limit;
 
 session_start();
 
-$username = $_SESSION["username"];
+$username = $_SESSION["username"] ?? null;
 $user_preference = $_SESSION['preference'] ?? null;
+$currentUserRole = 0;
+$profiles = [];
+$hasMore = false;
+$totalCount = 0;
 
-   
+if ($username) {
+    $roleStmt = $pdo->prepare('SELECT role FROM profiles WHERE username = :username LIMIT 1');
+    $roleStmt->execute([':username' => $username]);
+    $row = $roleStmt->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        $currentUserRole = (int)$row['role'];
+    }
+}
+
 try {
     $sql = "SELECT 
             p.id, 
@@ -25,19 +37,26 @@ try {
             p.salary, 
             p.preference, 
             p.email, 
-            p.likes, 
-            p.role 
-            FROM profiles p 
-            WHERE 1=1 ";
+            COALESCE(p.likes, 0) AS likes, 
+            p.role, 
+            COALESCE(p.is_softbanned, 0) AS is_softbanned 
+        FROM profiles p 
+        WHERE 1=1 ";
 
     $params = [];
 
     // dont include yourself lol
-    $sql .= " AND p.username != :cur_username ";
-    $params[':cur_username'] = $username;
+    if ($username) {
+        $sql .= " AND p.username != :cur_username ";
+        $params[':cur_username'] = $username;
+    }
 
+    // normal users should not see softbanned profiles
+    if ($currentUserRole < 3) {
+        $sql .= " AND p.is_softbanned = 0 ";
+    }
 
-    $sql .= " ORDER BY p.likes DESC, p.id ASC 
+    $sql .= " ORDER BY p.is_softbanned ASC, p.likes DESC, p.id ASC 
               LIMIT :limit OFFSET :offset";
 
     $stmt = $pdo->prepare($sql);
@@ -58,8 +77,14 @@ try {
 
     $countParams = [];
 
-    $countSql .= " AND p.username != :cur_username ";
-    $countParams[':cur_username'] = $username;
+    if ($username) {
+        $countSql .= " AND p.username != :cur_username ";
+        $countParams[':cur_username'] = $username;
+    }
+
+    if ($currentUserRole < 3) {
+        $countSql .= " AND p.is_softbanned = 0 ";
+    }
 
     $countStmt = $pdo->prepare($countSql);
     foreach ($countParams as $key => $value) {
@@ -81,11 +106,13 @@ try {
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['error' => $e->getMessage()]);
+    exit;
 }
 
 echo json_encode([
     'profiles' => $profiles,
     'hasMore' => $hasMore,
     'chunk' => $chunk,
-    'totalCount' => (int)$totalCount
+    'totalCount' => (int)$totalCount,
+    'currentUserRole' => $currentUserRole
 ]);

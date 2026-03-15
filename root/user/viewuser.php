@@ -31,6 +31,16 @@ $prefMap = [
     2 => 'Women',
     3 => 'Other'
 ];
+
+$currentUserRole = 0;
+if (isset($_SESSION['username'])) {
+    $curStmt = $pdo->prepare('SELECT role FROM profiles WHERE username = :username LIMIT 1');
+    $curStmt->execute([':username' => $_SESSION['username']]);
+    $curRow = $curStmt->fetch(PDO::FETCH_ASSOC);
+    if ($curRow) {
+        $currentUserRole = (int)$curRow['role'];
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -95,6 +105,7 @@ $prefMap = [
     <script>
         const profileOwnerId = <?php echo (int)$user['id']; ?>;
         const profileOwnerUsername = <?php echo json_encode($user['username']); ?>;
+        const currentUserRole = <?php echo (int)$currentUserRole; ?>;
 
         async function fetchComments() {
             const response = await fetch(`../scripts/profile_comments.php?profile_owner_id=${profileOwnerId}`);
@@ -177,6 +188,7 @@ $prefMap = [
                     <div class="comment-actions">
                         <button class="comment-reply-btn" data-comment-id="${comment.id}">Reply</button>
                         ${comment.reply_count > 0 ? `<button class="comment-show-replies-btn" data-comment-id="${comment.id}">Show ${comment.reply_count} repl${comment.reply_count > 1 ? 'ies' : 'y'}</button>` : ''}
+                        ${currentUserRole >= 3 ? `<button class="comment-delete-btn" data-comment-id="${comment.id}">Delete</button>` : ''}
                     </div>
                     <div id="replies-${comment.id}" class="comment-replies"></div>
                 `;
@@ -218,6 +230,23 @@ $prefMap = [
                         repliesContainer.appendChild(replyEl);
                     });
                     btn.textContent = 'Hide replies';
+                });
+            });
+
+            container.querySelectorAll('.comment-delete-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const commentId = btn.getAttribute('data-comment-id');
+                    const response = await fetch('../scripts/profile_comments.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'delete', comment_id: commentId })
+                    });
+                    const result = await response.json();
+                    if (result.error) {
+                        alert('Error deleting comment: ' + result.error);
+                        return;
+                    }
+                    await fetchComments();
                 });
             });
         }

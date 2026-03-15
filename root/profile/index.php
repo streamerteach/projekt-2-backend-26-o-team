@@ -18,7 +18,7 @@ include "../scripts/databaseConnection.php";
 $userDetails = [];
 if (isset($_SESSION['username'])) {
     $conn = create_conn();
-    $stmt = $conn->prepare("SELECT id, realname, bio, salary, preference, likes FROM profiles WHERE username = :u");
+$stmt = $conn->prepare("SELECT id, realname, bio, salary, preference, likes, role FROM profiles WHERE username = :u");
     $stmt->execute([':u' => $_SESSION['username']]);
     $userDetails = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     $conn = null;
@@ -101,6 +101,7 @@ if (isset($_SESSION['username'])) {
 
         <script>
             const profileOwnerId = <?php echo json_encode($userDetails['id'] ?? null); ?>;
+            const currentUserRole = <?php echo json_encode($userDetails['role'] ?? 0); ?>;
 
             async function loadProfileComments() {
                 const res = await fetch(`../scripts/profile_comments.php?profile_owner_id=${profileOwnerId}`);
@@ -136,6 +137,7 @@ if (isset($_SESSION['username'])) {
                         <div class="comment-actions">
                             <button type="button" class="reply-button" data-id="${comment.id}">Reply</button>
                             ${comment.reply_count > 0 ? `<button type="button" class="show-replies-button" data-id="${comment.id}">Show ${comment.reply_count} repl${comment.reply_count > 1 ? 'ies' : 'y'}</button>` : ''}
+                            ${currentUserRole >= 3 ? `<button type="button" class="comment-delete-btn" data-id="${comment.id}">Delete</button>` : ''}
                         </div>
                         <div id="replies-${comment.id}" class="comment-replies"></div>
                     `;
@@ -173,6 +175,23 @@ if (isset($_SESSION['username'])) {
                             replyContainer.appendChild(r);
                         });
                         button.textContent = 'Hide replies';
+                    });
+                });
+
+                container.querySelectorAll('.comment-delete-btn').forEach(button => {
+                    button.addEventListener('click', async () => {
+                        const commentId = button.dataset.id;
+                        const response = await fetch('../scripts/profile_comments.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'delete', comment_id: commentId })
+                        });
+                        const result = await response.json();
+                        if (result.error) {
+                            alert('Error deleting comment: ' + result.error);
+                            return;
+                        }
+                        await loadProfileComments();
                     });
                 });
             }

@@ -60,31 +60,83 @@ function createProfileCard(profile) {
     const card = document.createElement('a');
     card.className = 'profile-card';
     card.href = `../user/viewuser.php?user=${profile.username}`;
-    
-    // Map database fields to display fields
-    const displayName = profile.realname;
-    
 
-    
+    const displayName = profile.realname || profile.username;
+    const isSoftbanned = (Number(profile.is_softbanned) === 1);
+
+    if (isSoftbanned) {
+        card.classList.add('softbanned-profile');
+    }
+
     card.innerHTML = `
         <div class="profile-header">
             <img class="profile-avatar" src="../media/upload/${profile.username}_profile.jpg" onerror="this.onerror=null; this.src='../media/Default.jpg'">
             <div class="profile-info">
-                <h3>${displayName}</h3>
+                <h3>${displayName} ${isSoftbanned ? '<span class="banned-tag">[Softbanned]</span>' : ''}</h3>
             </div>
         </div>
         <div class="profile-details">
-        <p><strong> ${profile.bio || 'No bio provided'}</strong></p>
+            <p><strong>${profile.bio || 'No bio provided'}</strong></p>
             <p><strong>Location:</strong> ${profile.zipcode || 'Not specified'}</p>
             <p><strong>Preference:</strong> ${map[profile.preference] || 'Not specified'}</p>
             <p>${profile.email || 'Not specified'}</p>
             <p><strong>Likes:</strong> ${profile.likes || 0}</p>
             <div class="salary">${profile.salary_formatted || 'Salary not specified'}</div>
-
         </div>
     `;
-    
+
+    if (window.currentUserRole >= 3) {
+        const actionBtn = document.createElement('button');
+        actionBtn.textContent = isSoftbanned ? 'Un-softban' : 'Softban';
+        actionBtn.className = 'softban-toggle-btn';
+        actionBtn.addEventListener('click', async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            actionBtn.disabled = true;
+            try {
+                const result = await toggleSoftban(profile.id, profile.username);
+                if (result && typeof result.is_softbanned !== 'undefined') {
+                    const newState = Number(result.is_softbanned) === 1;
+                    if (newState) {
+                        card.classList.add('softbanned-profile');
+                        actionBtn.textContent = 'Un-softban';
+                    } else {
+                        card.classList.remove('softbanned-profile');
+                        actionBtn.textContent = 'Softban';
+                    }
+                }
+            } catch (err) {
+                console.error('Softban toggle failed', err);
+                alert('Failed to update softban status.');
+            } finally {
+                actionBtn.disabled = false;
+            }
+        });
+
+        const placeholder = document.createElement('div');
+        placeholder.className = 'softban-button-container';
+        placeholder.appendChild(actionBtn);
+        card.appendChild(placeholder);
+    }
+
     return card;
+}
+
+async function toggleSoftban(profileId, profileUsername) {
+    const response = await fetch('../scripts/profile_softban.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ profile_id: profileId, profile_username: profileUsername }),
+    });
+
+    if (!response.ok) {
+        const errPayload = await response.json().catch(() => null);
+        throw new Error(errPayload?.error || 'Softban request failed');
+    }
+
+    return await response.json();
 }
 // Retry loading on error
 function retryLoading() {

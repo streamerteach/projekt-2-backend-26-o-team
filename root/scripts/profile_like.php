@@ -33,21 +33,11 @@ try {
             exit;
         }
 
-        //count net likes
-        $sumStmt = $pdo->prepare('SELECT COALESCE(SUM(value),0) AS net_likes FROM profile_likes WHERE profile_owner_id = :profile_owner_id');
-        $sumStmt->execute([':profile_owner_id' => $profileOwnerId]);
-        $netLikes = (int)$sumStmt->fetchColumn();
+        $stmt = $pdo->prepare('SELECT likes FROM profiles WHERE id = :id LIMIT 1');
+        $stmt->execute([':id' => $profileOwnerId]);
+        $likes = (int)$stmt->fetchColumn();
 
-        //current user vote
-        $voteStmt = $pdo->prepare('SELECT value FROM profile_likes WHERE user_id = :user_id AND profile_owner_id = :profile_owner_id LIMIT 1');
-        $voteStmt->execute([':user_id' => $userId, ':profile_owner_id' => $profileOwnerId]);
-        $row = $voteStmt->fetch(PDO::FETCH_ASSOC);
-        $userVote = $row ? (int)$row['value'] : 0;
-
-        $updateStmt = $pdo->prepare('UPDATE profiles SET likes = :likes WHERE id = :id');
-        $updateStmt->execute([':likes' => $netLikes, ':id' => $profileOwnerId]);
-
-        echo json_encode(['likes' => $netLikes, 'user_vote' => $userVote]);
+        echo json_encode(['likes' => $likes, 'user_vote' => 0]);
         exit;
     }
 

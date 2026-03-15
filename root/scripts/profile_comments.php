@@ -54,8 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    $action = isset($data['action']) ? trim($data['action']) : 'create';
     $profileOwnerId = isset($data['profile_owner_id']) ? (int)$data['profile_owner_id'] : null;
     $profileOwnerUsername = isset($data['profile_owner_username']) ? trim($data['profile_owner_username']) : null;
+    $commentId = isset($data['comment_id']) ? (int)$data['comment_id'] : null;
     $content = trim($data['content'] ?? '');
     $parentCommentId = isset($data['parent_comment_id']) && $data['parent_comment_id'] !== null ? (int)$data['parent_comment_id'] : null;
 
@@ -68,10 +70,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (!$profileOwnerId || $content === '') {
-        http_response_code(400);
-        echo json_encode(['error' => 'profile_owner_id and content are required']);
-        exit;
+    if ($action === 'delete') {
+        if (!$commentId) {
+            http_response_code(400);
+            echo json_encode(['error' => 'comment_id is required for delete']);
+            exit;
+        }
+    } else {
+        if (!$profileOwnerId || $content === '') {
+            http_response_code(400);
+            echo json_encode(['error' => 'profile_owner_id and content are required']);
+            exit;
+        }
     }
 
     // detect current user ID via profiles table.
@@ -89,6 +99,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $authorId = (int)$userRow['id'];
 
     try {
+        if ($action === 'delete') {
+            // check admin/manager role for deletion
+            $roleStmt = $pdo->prepare('SELECT role FROM profiles WHERE username = :username LIMIT 1');
+            $roleStmt->execute([':username' => $_SESSION['username']]);
+            $roleRow = $roleStmt->fetch(PDO::FETCH_ASSOC);
+            $currentRole = $roleRow ? (int)$roleRow['role'] : 0;
+            if ($currentRole < 3) {
+                http_response_code(403);
+                echo json_encode(['error' => 'Insufficient role to delete comments']);
+                exit;
+            }
+
+            $deleteStmt = $pdo->prepare('UPDATE profile_comments SET is_deleted = 1 WHERE id = :comment_id');
+            $deleteStmt->execute([':comment_id' => $commentId]);
+
+            echo json_encode(['success' => true, 'deleted_comment_id' => $commentId]);
+            exit;
+        }
+
         $stmt = $pdo->prepare('INSERT INTO profile_comments (user_id, profile_owner_id, parent_comment_id, content) VALUES (:user_id, :profile_owner_id, :parent_comment_id, :content)');
         $stmt->bindValue(':user_id', $authorId, PDO::PARAM_INT);
         $stmt->bindValue(':profile_owner_id', $profileOwnerId, PDO::PARAM_INT);
