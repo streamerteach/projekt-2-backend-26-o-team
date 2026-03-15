@@ -60,7 +60,12 @@ if (isset($_SESSION['username'])) {
                         $map = ['0'=> 'All', '1'=>'Men', '2'=>'Women', '3'=>'Other'];
                         echo $map[$userDetails['preference']] ?? 'Unknown';
                     ?></p>
-                    <p><strong>Likes:</strong> <?php echo htmlspecialchars($userDetails['likes'] ?? '0'); ?></p>
+                    <p><strong>Likes:</strong> <span id="profileLikeCount"><?php echo htmlspecialchars($userDetails['likes'] ?? '0'); ?></span></p>
+                    <div id="profileVoteArea">
+                        <button id="profileLikeBtn" type="button">Like</button>
+                        <button id="profileDislikeBtn" type="button">Dislike</button>
+                        <p id="profileVoteStatus" style="font-size:0.9rem; margin:5px 0 0;">You have not voted yet.</p>
+                    </div>
                 </div>
             <?php endif; ?>
 
@@ -73,7 +78,7 @@ if (isset($_SESSION['username'])) {
             <div id="profileCommentsSection">
                 <h2>Your Profile Comments</h2>
                 <form id="profileCommentForm">
-                    <textarea id="profileCommentText" placeholder="Write a comment on your profile (for testing or moderation)" rows="4" cols="50" required></textarea>
+                    <textarea id="profileCommentText" placeholder="Write a comment on your profile" rows="4" cols="50" required></textarea>
                     <input type="hidden" id="profileParentCommentId" value="">
                     <button type="submit">Post Comment</button>
                 </form>
@@ -176,6 +181,46 @@ if (isset($_SESSION['username'])) {
                 const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
                 return String(text).replace(/[&<>"']/g, m => map[m]);
             }
+
+            async function fetchLikeState() {
+                const res = await fetch(`../scripts/profile_like.php?profile_owner_id=${profileOwnerId}`);
+                const data = await res.json();
+                if (data.error) {
+                    console.error('Like state error', data.error);
+                    return;
+                }
+                document.getElementById('profileLikeCount').textContent = data.likes;
+                const status = document.getElementById('profileVoteStatus');
+                if (data.user_vote === 1) {
+                    status.textContent = 'You liked your profile.';
+                } else if (data.user_vote === -1) {
+                    status.textContent = 'You disliked your profile.';
+                } else {
+                    status.textContent = 'You have not voted yet.';
+                }
+                document.getElementById('profileLikeBtn').disabled = data.user_vote === 1;
+                document.getElementById('profileDislikeBtn').disabled = data.user_vote === -1;
+            }
+
+            async function setProfileVote(action) {
+                const res = await fetch('../scripts/profile_like.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ profile_owner_id: profileOwnerId, action })
+                });
+                const data = await res.json();
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                await fetchLikeState();
+                await loadProfileComments();
+            }
+
+            document.getElementById('profileLikeBtn').addEventListener('click', () => setProfileVote('like'));
+            document.getElementById('profileDislikeBtn').addEventListener('click', () => setProfileVote('dislike'));
+
+            fetchLikeState();
 
             document.getElementById('profileCommentForm').addEventListener('submit', async event => {
                 event.preventDefault();

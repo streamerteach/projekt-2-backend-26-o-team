@@ -65,6 +65,15 @@ $prefMap = [
                 <p><strong>Role:</strong> <?php echo htmlspecialchars($user['role'] ?? 'Unknown'); ?></p>
             </div>
 
+            <div id="profileVotesSection">
+                <p>
+                    <strong>Net likes:</strong> <span id="profileLikeCount"><?php echo htmlspecialchars($user['likes'] ?? '0'); ?></span>
+                </p>
+                <button id="likeBtn" type="button">Like</button>
+                <button id="dislikeBtn" type="button">Dislike</button>
+                <p id="voteStatus" style="font-size: 0.9rem; margin-top: 8px;"></p>
+            </div>
+
             <div class="profileActions">
                 <button type="button" onclick="window.history.back();">Back</button>
                 <button type="button" onclick="location.href='../homePage/index.php';">Home</button>
@@ -96,6 +105,49 @@ $prefMap = [
             }
             renderComments(json.comments);
         }
+
+        async function fetchLikeState() {
+            const response = await fetch(`../scripts/profile_like.php?profile_owner_id=${profileOwnerId}`);
+            const json = await response.json();
+            if (json.error) {
+                console.error('Like state error', json.error);
+                return;
+            }
+            const likeCountEl = document.getElementById('profileLikeCount');
+            likeCountEl.textContent = json.likes;
+            const voteStatusEl = document.getElementById('voteStatus');
+            const userVote = json.user_vote || 0;
+            if (userVote === 1) {
+                voteStatusEl.textContent = 'You liked this profile.';
+            } else if (userVote === -1) {
+                voteStatusEl.textContent = 'You disliked this profile.';
+            } else {
+                voteStatusEl.textContent = 'You have not voted yet.';
+            }
+            updateVoteButtons(userVote);
+        }
+
+        function updateVoteButtons(userVote) {
+            document.getElementById('likeBtn').disabled = (userVote === 1);
+            document.getElementById('dislikeBtn').disabled = (userVote === -1);
+        }
+
+        async function setVote(action) {
+            const response = await fetch('../scripts/profile_like.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ profile_owner_id: profileOwnerId, profile_owner_username: profileOwnerUsername, action })
+            });
+            const json = await response.json();
+            if (json.error) {
+                alert('Error: ' + json.error);
+                return;
+            }
+            await fetchLikeState();
+        }
+
+        document.getElementById('likeBtn').addEventListener('click', () => setVote('like'));
+        document.getElementById('dislikeBtn').addEventListener('click', () => setVote('dislike'));
 
         async function fetchReplies(parentCommentId) {
             const response = await fetch(`../scripts/profile_comments.php?parent_comment_id=${parentCommentId}`);
@@ -202,7 +254,7 @@ $prefMap = [
             console.error('profileOwnerId is invalid:', profileOwnerId, 'profileOwnerUsername:', profileOwnerUsername);
         }
 
-
+        fetchLikeState();
         fetchComments();
     </script>
 </body>
