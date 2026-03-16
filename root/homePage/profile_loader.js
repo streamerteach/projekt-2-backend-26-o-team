@@ -1,7 +1,7 @@
 let chunk = 1;
 let loading = false;
 let hasMore = true;
-let profilescontainer = document.getElementById("datingProfilesContainer"); 
+let profilescontainer = document.getElementById("datingProfilesContainer");
 let loadingindicator = document.getElementById('loadingIndicator');
 let endmessage = document.getElementById('endMessage');
 let errormessage = document.getElementById('errorMessage');
@@ -18,7 +18,7 @@ async function loadProfiles() {
     errormessage.classList.remove('active');
     try {
         const response = await fetch(`./profileshandler.php?chunk=${chunk}`);
-        
+
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -28,10 +28,10 @@ async function loadProfiles() {
             throw new Error(data.error);
         }
         displayProfiles(data.profiles);
-        
+
         hasMore = data.hasMore;
         chunk++;
-        
+
         // Show end message if no more profiles
         if (!hasMore) {
             endmessage.classList.add('active');
@@ -52,7 +52,7 @@ function displayProfiles(profiles) {
     profiles.forEach(profile => {
         const profileCard = createProfileCard(profile);
         profilescontainer.appendChild(profileCard);
-        
+
     });
 }
 
@@ -156,7 +156,7 @@ function resetAndReload() {
 let timeout;
 
 const debounce = (func, delay) => {
-    return function(...args) {
+    return function (...args) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(this, args), delay);
     };

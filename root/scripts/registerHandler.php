@@ -40,4 +40,3 @@ function create_user(
         return ['success' => false, 'message' => $e->getMessage()];
     }
 }
-?>

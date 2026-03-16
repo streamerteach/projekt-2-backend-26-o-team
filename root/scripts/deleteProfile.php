@@ -46,7 +46,7 @@ try {
     $response['success'] = true;
     $response['message'] = 'Profile deleted. You will be logged out.';
 } catch (PDOException $e) {
-    $response['message'] = 'Database error: '.$e->getMessage();
+    $response['message'] = 'Database error: ' . $e->getMessage();
 }
 $conn = null;
 

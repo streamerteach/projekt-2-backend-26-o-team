@@ -46,7 +46,7 @@ try {
         $data = json_decode($raw, true);
         if (!is_array($data)) {
             http_response_code(400);
-            echo json_encode(['error' => 'Invalid JSON']);
+            echo json_encode(['error' => 'Invalid JASON']);
             exit;
         }
 
@@ -79,7 +79,7 @@ try {
         if ($action === 'like') $value = 1;
         if ($action === 'dislike') $value = -1;
 
-            if ($action === 'clear') {
+        if ($action === 'clear') {
             //leftover
         } else {
             if ($action === 'like') {
@@ -103,7 +103,6 @@ try {
     http_response_code(405);
     echo json_encode(['error' => 'Method not allowed']);
     exit;
-
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Profile like error', 'details' => $e->getMessage()]);

@@ -33,7 +33,7 @@ try {
     $payload = json_decode(file_get_contents('php://input'), true);
     if (!is_array($payload)) {
         http_response_code(400);
-        echo json_encode(['error' => 'Invalid JSON']);
+        echo json_encode(['error' => 'Invalid JASON']);
         exit;
     }
 
@@ -55,7 +55,7 @@ try {
         exit;
     }
 
-    // Prevent self-softban by admin and allow moderation on others only
+    //prevent self ban. allow moderation on others only
     $userInfo = $pdo->prepare('SELECT username, is_softbanned FROM profiles WHERE id = :id LIMIT 1');
     $userInfo->execute([':id' => $profileId]);
     $targetProfile = $userInfo->fetch(PDO::FETCH_ASSOC);

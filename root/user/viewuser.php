@@ -2,6 +2,7 @@
 include "../scripts/sessionhandler.php";
 include "../scripts/databaseConnection.php";
 
+//guard statements
 if (!isset($_SESSION['username'])) {
     header('Location: ../login/index.php');
     exit;
@@ -45,6 +46,7 @@ if (isset($_SESSION['username'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,6 +55,8 @@ if (isset($_SESSION['username'])) {
     <link rel="stylesheet" href="../profile/profileStylesheet.css">
     <link rel="stylesheet" href="../scripts/scripts.css">
 </head>
+<!--using data-profile-owner-id instead of id??????-->
+
 <body data-profile-owner-id="<?php echo (int)$user['id']; ?>" data-profile-owner-username="<?php echo htmlspecialchars($user['username'], ENT_QUOTES); ?>" data-current-user-role="<?php echo (int)$currentUserRole; ?>">
     <?php include "../scripts/nav.php"; ?>
 
@@ -79,6 +83,7 @@ if (isset($_SESSION['username'])) {
                 <p><strong>Net likes:</strong> <span id="profileLikeCount"><?php echo htmlspecialchars($user['likes'] ?? '0'); ?></span></p>
                 <button id="likeBtn" type="button">Like</button>
                 <button id="dislikeBtn" type="button">Dislike</button>
+                <!--remember to vote kids!-->
                 <p id="voteStatus" class="vote-status"></p>
             </div>
 
@@ -102,4 +107,5 @@ if (isset($_SESSION['username'])) {
 
     <script src="../scripts/viewuser.js"></script>
 </body>
+
 </html>
