@@ -17,6 +17,7 @@
     <div>
         here be report
         <button onclick="location.href='./erikReport.php'">Erik Report</button>
+        <button onclick="location.href='./erikReportProject2.php'">Erik Report Project 2</button>
         <button onclick="location.href='./liseReport.php'">Lise Report</button>
     </div>
 </body>
