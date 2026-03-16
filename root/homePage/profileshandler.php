@@ -6,12 +6,18 @@ include "../scripts/databaseConnection.php";
 $pdo = create_conn();
 
 $chunk = isset($_GET['chunk']) ? (int)$_GET['chunk'] : 1;
+
+$preference = isset($_GET['p']) ? (int)$_GET['p'] : 0;
+$likes = isset($_GET['l']) ? (int)$_GET['l'] : 0;
+$match = isset($_GET['m']) ? (int)$_GET['m'] : 0;
+
 $limit = 10;
 $offset = ($chunk - 1) * $limit;
 
 session_start();
 
 $username = $_SESSION["username"] ?? null;
+$gender = $_SESSION["gender"] ?? 2;
 $user_preference = $_SESSION['preference'] ?? null;
 $currentUserRole = 0;
 $profiles = [];
@@ -35,7 +41,8 @@ try {
             p.zipcode, 
             p.bio, 
             p.salary, 
-            p.preference, 
+            p.preference,
+            p.gender, 
             p.email, 
             COALESCE(p.likes, 0) AS likes, 
             p.role, 
@@ -50,6 +57,31 @@ try {
         $sql .= " AND p.username != :cur_username ";
         $params[':cur_username'] = $username;
     }
+
+    if ($likes > 0) {
+        $sql .= " AND p.likes >= :likes ";
+        $params[':likes'] = $likes;
+    }
+
+    if ($match) {
+        $gender_map = [
+            0 => " OR p.preference = 1) ",
+            1 => " OR p.preference = 2) ",
+            2 => " OR p.preference = 3) "
+        ];
+
+        $sql .= " AND (p.preference = 0 " . $gender_map[$gender];
+    }
+
+if ($preference != 0) {
+    $preference_map = [
+        0 => "",
+        1 => " p.gender = 0 ", 
+        2 => " p.gender = 1 ", 
+        3 => " p.gender = 2 "  
+    ];
+    $sql .= " AND " . $preference_map[$preference];
+}
 
     // normal users should not see softbanned profiles
     if ($currentUserRole < 3) {
@@ -85,6 +117,31 @@ try {
     if ($currentUserRole < 3) {
         $countSql .= " AND p.is_softbanned = 0 ";
     }
+
+        if ($likes > 0) {
+        $countSql .= " AND p.likes >= :likes ";
+        $countParams[':likes'] = $likes;
+    }
+
+    if ($match) {
+        $gender_map = [
+            0 => " OR p.preference = 1) ",
+            1 => " OR p.preference = 2) ",
+            2 => " OR p.preference = 3) "
+        ];
+
+        $countSql .= " AND (p.preference = 0 " . $gender_map[$gender];
+    }
+
+if ($preference != 0) {
+    $preference_map = [
+        0 => "",
+        1 => " p.gender = 0 ", 
+        2 => " p.gender = 1 ", 
+        3 => " p.gender = 2 "  
+    ];
+    $countSql .= " AND " . $preference_map[$preference];
+}
 
     $countStmt = $pdo->prepare($countSql);
     foreach ($countParams as $key => $value) {

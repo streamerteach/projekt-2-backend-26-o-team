@@ -13,6 +13,7 @@ if (isset($_REQUEST['username']) && isset($_REQUEST['email']) && isset($_REQUEST
     $password = test_input($_REQUEST['password']);
     $firstname = test_input($_REQUEST['firstname']);
     $lastname = test_input($_REQUEST['lastname']);
+    $gender = test_input($_REQUEST['gender']);
     $realname = trim($firstname) . " " . trim($lastname);
     $zipcode = test_input($_REQUEST['zipcode']);
     $salary = test_input($_REQUEST['salary']);
@@ -27,7 +28,7 @@ if (isset($_REQUEST['username']) && isset($_REQUEST['email']) && isset($_REQUEST
     }
 
     $conn = create_conn();
-    $result = create_user($username, $realname, $zipcode, $bio, $salary, $preference, $email, $password, $conn);
+    $result = create_user($username, $realname, $zipcode, $bio, $salary, $preference, $gender, $email, $password, $conn);
     $conn = null;
 
     if ($result['success']) {

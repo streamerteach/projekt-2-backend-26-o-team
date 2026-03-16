@@ -34,6 +34,12 @@
                 <p class="small">First Name</p>
                 <input type="text" name="firstname" required><br>
                 <p class="small">Last Name</p>
+                <label class="small" for="gender">Gender</label>
+                <select name="gender" id="dropdown" value="2">
+                    <option value="0">Man</option>
+                    <option value="1">Woman</option>
+                    <option value="2">Other</option>
+                </select>
                 <input type="text" name="lastname" required><br>
                 <p class="small">ZIP code [ we store your data securely :-) ]</p>
                 <input type="text" name="zipcode" required><br>

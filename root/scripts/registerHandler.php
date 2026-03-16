@@ -11,6 +11,7 @@ function create_user(
     $bio,
     $salary,
     $preference,
+    $gender,
     $email,
     $password,
     $conn
@@ -19,9 +20,9 @@ function create_user(
     $passhash = password_hash($password, PASSWORD_DEFAULT);
     try {
         $sql = "INSERT INTO profiles 
-    (username, realname, zipcode, bio, salary, preference, email, likes, role, passhash)
+    (username, realname, zipcode, bio, salary, preference, gender, email, likes, role, passhash)
     VALUES 
-    (:username, :realname, :zipcode, :bio, :salary, :preference, :email, NULL, 1, :passhash)";
+    (:username, :realname, :zipcode, :bio, :salary, :preference, :gender, :email, NULL, 1, :passhash)";
 
         $stmt = $conn->prepare($sql);
         $stmt->execute([
@@ -31,6 +32,7 @@ function create_user(
             ':bio' => $bio,
             ':salary' => $salary,
             ':preference' => $preference,
+            ':gender' => $gender,
             ':email' => $email,
             ':passhash' => $passhash
         ]);

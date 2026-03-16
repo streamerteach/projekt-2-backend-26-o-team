@@ -37,11 +37,14 @@ function verify_user($user,$password) {
     }
 }
 
-function populate_session($user) { // ONLY EVER RUN AFTER VERIFYING PASSWORD!
+function populate_session($user) { // ONLY EVER RUN AFTER VERIFYING PASSWORD! // saving some user variables in the session reduces amount of database calls needed
         $_SESSION["username"] = $user['username'];
+        $_SESSION["preference"] = $user['preference'];
+        $_SESSION["gender"] = $user['gender'];
         $_SESSION["realname"] = $user['realname'];
         $_SESSION["bio"] = $user['bio'];
         $_SESSION["role"] = $user['role'];
+
         $_SESSION["loggedin"] = true;
 }
 

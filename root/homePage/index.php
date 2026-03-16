@@ -31,7 +31,25 @@ if (isset($_SESSION['username'])) {
     <div id="centeringDiv">
         <h2>Welcome to the Home Page</h2>
         
-
+        <div id="filterContainer">
+            <div class=line>
+                <label for="likes">minimum likes:</label>
+                <input type="number" id=likes name=likes value="0" onchange="debounce(reloadProfiles())">
+            </div>
+            <div class=line>
+            <label for="match">filter to people who prefer you</label>
+            <input type="checkbox" id=match name=match checked="true" onchange="debounce(reloadProfiles())">
+            </div>
+            <div class=line>
+            <label for="pref">preference:</label>
+            <select id=pref name=pref onchange="debounce(reloadProfiles())" value="<?php echo $_SESSION['preference'] ?>">
+              <option value="0">All</option>
+              <option value="1">Men</option>
+              <option value="2">Women</option>
+              <option value="3">Other</option>
+            </select>
+            </div>
+        </div>
         <div id="datingProfilesContainer">
             
         </div>

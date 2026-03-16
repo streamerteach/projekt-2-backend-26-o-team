@@ -17,6 +17,7 @@ if (isset($_POST['bio']) && isset($_POST['salary']) && isset($_POST['preference'
     $bio = test_input($_POST['bio']);
     $salary = test_input($_POST['salary']);
     $preference = test_input($_POST['preference']);
+    $gender = test_input($_POST['gender']);
 
     if (!is_numeric($salary) || $salary < 0) {
         $response['message'] = 'Salary must be a non‑negative number';
@@ -29,13 +30,20 @@ if (isset($_POST['bio']) && isset($_POST['salary']) && isset($_POST['preference'
         exit;
     }
 
+    if (!in_array($gender, ['0', '1', '2'])) {
+        $response['message'] = 'Invalid gender value';
+        echo json_encode($response);
+        exit;
+    }
+
     $conn = create_conn();
     try {
-        $stmt = $conn->prepare("UPDATE profiles SET bio = :bio, salary = :salary, preference = :preference WHERE username = :username");
+        $stmt = $conn->prepare("UPDATE profiles SET bio = :bio, salary = :salary, preference = :preference, gender = :gender WHERE username = :username");
         $stmt->execute([
             ':bio' => $bio,
             ':salary' => $salary,
             ':preference' => $preference,
+            ':gender' => $gender,
             ':username' => $_SESSION['username']
         ]);
         $response['success'] = true;

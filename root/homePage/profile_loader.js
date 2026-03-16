@@ -1,11 +1,21 @@
 let chunk = 1;
 let loading = false;
 let hasMore = true;
+// filter values
+let preference = 0; // All as default
+let minlikes = 0;
+let match = 1;
+
 let profilescontainer = document.getElementById("datingProfilesContainer"); 
 let loadingindicator = document.getElementById('loadingIndicator');
 let endmessage = document.getElementById('endMessage');
 let errormessage = document.getElementById('errorMessage');
-const map = ['All', 'Men', 'Women', 'Other'];
+let prefFilter = document.getElementById('pref');
+let likeFilter = document.getElementById('likes');
+let matchwithyou = document.getElementById('match');
+
+const mapPref = ['All', 'Men', 'Women', 'Other'];
+const mapGender = ['Man', 'Woman', 'Other'];
 
 document.addEventListener('DOMContentLoaded', () => {
     loadProfiles();
@@ -17,7 +27,12 @@ async function loadProfiles() {
     loadingindicator.classList.add('active');
     errormessage.classList.remove('active');
     try {
-        const response = await fetch(`./profileshandler.php?chunk=${chunk}`);
+        let message = `./profileshandler.php?chunk=${chunk}&l=${minlikes}&p=${preference}`;
+        if (match) {
+            message += `&m=1`;
+        }
+ 
+        const response = await fetch(message);
         
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -47,12 +62,9 @@ async function loadProfiles() {
 
 
 function displayProfiles(profiles) {
-    time = 2000; // 2000 = 2 seconds
-    waittime = time / profiles.length;
     profiles.forEach(profile => {
         const profileCard = createProfileCard(profile);
         profilescontainer.appendChild(profileCard);
-        
     });
 }
 
@@ -76,9 +88,10 @@ function createProfileCard(profile) {
             </div>
         </div>
         <div class="profile-details">
+            <p><strong></strong> ${mapGender[profile.gender] || 'Not specified'}</p>
             <p><strong>${profile.bio || 'No bio provided'}</strong></p>
             <p><strong>Location:</strong> ${profile.zipcode || 'Not specified'}</p>
-            <p><strong>Preference:</strong> ${map[profile.preference] || 'Not specified'}</p>
+            <p><strong>Preference:</strong> ${mapPref[profile.preference] || 'Not specified'}</p>
             <p>${profile.email || 'Not specified'}</p>
             <p><strong>Likes:</strong> ${profile.likes || 0}</p>
             <div class="salary">${profile.salary_formatted || 'Salary not specified'}</div>
@@ -143,19 +156,11 @@ function retryLoading() {
     errormessage.classList.remove('active');
     loadProfiles();
 }
-// Optional: Reset and reload all profiles
-function resetAndReload() {
-    profilescontainer.innerHTML = '';
-    chunk = 1;
-    hasMore = true;
-    endmessage.classList.remove('active');
-    errormessage.classList.remove('active');
-    loadProfiles();
-}
+
 
 let timeout;
 
-const debounce = (func, delay) => {
+const debounce = (func, delay) => { // prevent too many calls
     return function(...args) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(this, args), delay);
@@ -175,3 +180,24 @@ const bottomload = debounce(() => {
 }, 500);
 
 window.addEventListener('scroll', bottomload);
+
+
+function reloadProfiles() {
+    
+    console.log('JE::PP');
+    if (loading == true) {
+        return;
+    }
+    endmessage.classList.remove('active');
+    errormessage.classList.remove('active');
+
+    preference = prefFilter.value;
+    minlikes = likeFilter.value;
+    match = matchwithyou.checked == true ? 1 : 0;
+
+    chunk = 1;
+    hasMore = true;
+    profilescontainer.innerHTML = null;
+
+    loadProfiles();
+}

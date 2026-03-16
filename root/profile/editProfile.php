@@ -64,6 +64,13 @@ if (isset($_SESSION['username'])) {
                     <input type="text" name="bio" value="<?php echo htmlspecialchars($editBio); ?>" required><br>
                     <p class="small">Monthly salary</p>
                     <input type="text" name="salary" value="<?php echo htmlspecialchars($editSalary); ?>" required><br>
+                    <label class="small" for="genderEdit">Gender</label>
+                    <select name="gender" id="genderEdit">
+                        <option value="0" <?php if ($editPreference == 0) echo 'selected'; ?>>Man</option>
+                        <option value="1" <?php if ($editPreference == 1) echo 'selected'; ?>>Woman</option>
+                        <option value="2" <?php if ($editPreference == 2) echo 'selected'; ?>>Other</option>
+                    </select><br><br>
+
                     <label class="small" for="preferenceEdit">Preference</label>
                     <select name="preference" id="preferenceEdit">
                         <option value="0" <?php if ($editPreference == 0) echo 'selected'; ?>>All</option>

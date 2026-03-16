@@ -18,7 +18,7 @@ include "../scripts/databaseConnection.php";
 $userDetails = [];
 if (isset($_SESSION['username'])) {
     $conn = create_conn();
-$stmt = $conn->prepare("SELECT id, realname, bio, salary, preference, likes, role FROM profiles WHERE username = :u");
+$stmt = $conn->prepare("SELECT id, realname, bio, salary, preference, gender, likes, role FROM profiles WHERE username = :u");
     $stmt->execute([':u' => $_SESSION['username']]);
     $userDetails = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
     $conn = null;
@@ -55,6 +55,9 @@ $stmt = $conn->prepare("SELECT id, realname, bio, salary, preference, likes, rol
             <?php if (!empty($userDetails)): ?>
                 <div class="profileInfo">
                     <p><strong>Real name:</strong> <?php echo htmlspecialchars($userDetails['realname']); ?></p>
+                    <p><strong>Gender:</strong> <?php 
+                    $mapgender = ['0'=> 'Man', '1'=>'Woman', '2'=>'Other'];
+                    echo $mapgender[$userDetails['gender']]; ?></p>
                     <p><strong>Bio:</strong> <?php echo htmlspecialchars($userDetails['bio']); ?></p>
                     <p><strong>Salary:</strong> <?php echo htmlspecialchars($userDetails['salary']); ?></p>
                     <p><strong>Preference:</strong> <?php
