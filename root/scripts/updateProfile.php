@@ -58,4 +58,3 @@ if (isset($_POST['bio']) && isset($_POST['salary']) && isset($_POST['preference'
 
 echo json_encode($response);
 exit;
-?>

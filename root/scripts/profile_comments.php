@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!is_array($data)) {
         http_response_code(400);
-        echo json_encode(['error' => 'Invalid JSON']);
+        echo json_encode(['error' => 'Invalid JASON']);
         exit;
     }
 

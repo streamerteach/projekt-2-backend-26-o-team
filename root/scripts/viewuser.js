@@ -6,6 +6,7 @@
     async function fetchComments() {
         const response = await fetch(`../scripts/profile_comments.php?profile_owner_id=${profileOwnerId}`);
         const json = await response.json();
+        //hello jason here
         if (json.error) {
             console.error(json.error);
             return;
@@ -63,6 +64,7 @@
 
     function escapeHtml(text) {
         const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+        //i did not come up with this return statement. found it no stack
         return String(text).replace(/[&<>"']/g, m => map[m]);
     }
 

@@ -43,10 +43,10 @@ async function loadProfiles() {
             throw new Error(data.error);
         }
         displayProfiles(data.profiles);
-        
+
         hasMore = data.hasMore;
         chunk++;
-        
+
         // Show end message if no more profiles
         if (!hasMore) {
             endmessage.classList.add('active');

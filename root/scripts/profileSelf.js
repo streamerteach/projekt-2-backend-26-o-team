@@ -2,6 +2,7 @@
     const profileOwnerId = Number(document.body.dataset.profileOwnerId || 0);
     const currentUserRole = Number(document.body.dataset.currentUserRole || 0);
 
+    //copy from viewuser
     async function loadProfileComments() {
         const res = await fetch(`../scripts/profile_comments.php?profile_owner_id=${profileOwnerId}`);
         const data = await res.json();
