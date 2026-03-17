@@ -33,11 +33,16 @@ try {
             exit;
         }
 
-        $stmt = $pdo->prepare('SELECT likes FROM profiles WHERE id = :id LIMIT 1');
+        $stmt = $pdo->prepare('SELECT COALESCE(likes, 0) AS likes FROM profiles WHERE id = :id LIMIT 1');
         $stmt->execute([':id' => $profileOwnerId]);
         $likes = (int)$stmt->fetchColumn();
 
-        echo json_encode(['likes' => $likes, 'user_vote' => 0]);
+        $userVote = 0;
+        if (isset($_SESSION['profile_votes']) && isset($_SESSION['profile_votes'][$profileOwnerId])) {
+            $userVote = (int)$_SESSION['profile_votes'][$profileOwnerId];
+        }
+
+        echo json_encode(['likes' => $likes, 'user_vote' => $userVote]);
         exit;
     }
 
@@ -46,7 +51,7 @@ try {
         $data = json_decode($raw, true);
         if (!is_array($data)) {
             http_response_code(400);
-            echo json_encode(['error' => 'Invalid JASON']);
+            echo json_encode(['error' => 'Invalid JSON']);
             exit;
         }
 
@@ -75,28 +80,50 @@ try {
             exit;
         }
 
-        $value = 0;
-        if ($action === 'like') $value = 1;
-        if ($action === 'dislike') $value = -1;
-
-        if ($action === 'clear') {
-            //leftover
-        } else {
-            if ($action === 'like') {
-                $stmt = $pdo->prepare('UPDATE profiles SET likes = likes + 1 WHERE id = :id');
-                $stmt->execute([':id' => $profileOwnerId]);
-            } elseif ($action === 'dislike') {
-                $stmt = $pdo->prepare('UPDATE profiles SET likes = likes - 1 WHERE id = :id');
-                $stmt->execute([':id' => $profileOwnerId]);
-            }
+        if (!isset($_SESSION['profile_votes'])) {
+            $_SESSION['profile_votes'] = [];
         }
 
+        $currentVote = $_SESSION['profile_votes'][$profileOwnerId] ?? 0;
+        $newVote = $currentVote;
+        $delta = 0;
+
+        if ($action === 'like') {
+            if ($currentVote === -1) {
+                $delta = 2;
+            } elseif ($currentVote === 0) {
+                $delta = 1;
+            }
+            $newVote = 1;
+        } elseif ($action === 'dislike') {
+            if ($currentVote === 1) {
+                $delta = -2;
+            } elseif ($currentVote === 0) {
+                $delta = -1;
+            }
+            $newVote = -1;
+        } elseif ($action === 'clear') {
+            if ($currentVote === 1) {
+                $delta = -1;
+            } elseif ($currentVote === -1) {
+                $delta = 1;
+            }
+            $newVote = 0;
+        }
+
+        if ($delta !== 0) {
+            $stmt = $pdo->prepare('UPDATE profiles SET likes = COALESCE(likes, 0) + :delta WHERE id = :id');
+            $stmt->execute([':delta' => $delta, ':id' => $profileOwnerId]);
+        }
+
+        $_SESSION['profile_votes'][$profileOwnerId] = $newVote;
+
         //read profile likes
-        $likeCountStmt = $pdo->prepare('SELECT likes FROM profiles WHERE id = :id');
+        $likeCountStmt = $pdo->prepare('SELECT COALESCE(likes, 0) AS likes FROM profiles WHERE id = :id');
         $likeCountStmt->execute([':id' => $profileOwnerId]);
         $netLikes = (int)$likeCountStmt->fetchColumn();
 
-        echo json_encode(['likes' => $netLikes, 'user_vote' => $action === 'clear' ? 0 : $value]);
+        echo json_encode(['likes' => $netLikes, 'user_vote' => $newVote]);
         exit;
     }
 
