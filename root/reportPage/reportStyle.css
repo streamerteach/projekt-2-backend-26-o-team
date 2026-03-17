@@ -72,3 +72,13 @@ h1,h2,h3,h4,h5 {
     background-color: red;
     color: blue;
 }
+
+.reportcontainer {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:500px;
+}
+.reportcontainer > button {
+    margin: 5px;    
+}
