@@ -15,7 +15,7 @@
         <p>
             click on the blue button to read the report.
         </p>
-        <button id="blueButton">Red</button>
+        <button id="blueButton" class="buttonMove">Red</button>
         <button id="redButton">Blue</button>
     </div>
     <section style="margin: 100px;" class="proj2Section" id="reportSection">

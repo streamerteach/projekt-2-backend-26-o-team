@@ -20,7 +20,7 @@
 
 html {
     height: 100%;
-    background-color: var(--collight);
+    background-color: var(--colbg);
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -31,9 +31,6 @@ body {
     margin: 0;
     padding: 0;
     background-color: var(--colbg);
-    height: 100vh;
-    height: 100dvh;
-    
 }
 
 button {
