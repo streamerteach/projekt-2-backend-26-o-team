@@ -140,7 +140,7 @@ input[type="submit"]:hover {
     display: flex;
     flex-direction: row;
     width: 100vw;
-    height: max(35vh , auto);
+    height: max(35vh, auto);
 }
 
 .flex-info {
@@ -192,7 +192,8 @@ input[type="submit"]:hover {
     min-width: 250px;
 }
 
-.section-dark, .section-light {
+.section-dark,
+.section-light {
     width: 100vw;
     height: auto;
     display: flex;
